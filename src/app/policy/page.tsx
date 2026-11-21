@@ -233,7 +233,7 @@ export default function PolicyHub() {
             <section className="space-y-2">
               <h2 className="text-sm font-bold text-white">제4조 (정보주체와 법정대리인의 권리·의무 및 행사방법)</h2>
               <p>
-                이용자는 공식 지원 서버(https://kcs.koharu.live/support-server/kcs) 또는 고객지원 티켓을 통해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.
+                이용자는 공식 지원 서버(https://kcs.koharu.live/server) 또는 고객지원 티켓을 통해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.
               </p>
             </section>
           </article>

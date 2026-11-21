@@ -511,7 +511,7 @@ export default function Dashboard() {
                 <span>{t.helpTerms}</span>
               </Link>
               <a
-                href="https://kcs.koharu.live/support-server/kcs"
+                href="https://kcs.koharu.live/server"
                 target="_blank"
                 rel="noreferrer"
                 className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl font-medium text-neutral-400 hover:text-white hover:bg-white/[0.03] transition"
@@ -713,7 +713,7 @@ export default function Dashboard() {
                       <AlertCircle className="h-8 w-8 text-neutral-500 mx-auto" />
                       <div className="text-xs text-neutral-400">{t.noAdminServers}</div>
                       <a
-                        href="https://discord.com/oauth2/authorize?client_id=1558397761861451805&permissions=8&integration_type=0&scope=bot"
+                        href="/invite"
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.1] text-xs font-bold text-white hover:bg-white/[0.1] transition"

@@ -33,8 +33,7 @@ export default function Home() {
   const [activeSimTab, setActiveSimTab] = useState<"phone" | "email" | "attendance" | "protect">("phone");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const inviteUrl =
-    "https://discord.com/oauth2/authorize?client_id=1558397761861451806&permissions=8&integration_type=0&scope=bot%20applications.commands";
+  const inviteUrl = "/invite";
 
   return (
     <div className="flex min-h-screen flex-col bg-[#0c0d12] text-[#dbdee1] selection:bg-indigo-600 selection:text-white font-sans relative">
@@ -539,7 +538,7 @@ export default function Home() {
               개인정보처리방침 & 이용약관
             </Link>
             <a
-              href="https://kcs.koharu.live/support-server/kcs"
+              href="https://kcs.koharu.live/server"
               target="_blank"
               rel="noreferrer"
               className="hover:text-white transition"
