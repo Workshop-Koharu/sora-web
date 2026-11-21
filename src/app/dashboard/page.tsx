@@ -20,6 +20,14 @@ import {
   Mail,
   ExternalLink,
   Sparkles,
+  Bot,
+  LayoutDashboard,
+  LogOut,
+  HelpCircle,
+  AlertTriangle,
+  Sliders,
+  DollarSign,
+  Ticket,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -105,758 +113,652 @@ export default function Dashboard() {
     }
   }
 
-  return (
-    <div className="flex min-h-screen bg-[#090a0f] text-[#dbdee1] selection:bg-indigo-600 selection:text-white relative">
-      {/* Ambient background glows */}
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute -top-40 left-1/3 w-[600px] h-[350px] bg-gradient-to-b from-indigo-600/10 via-purple-600/5 to-transparent blur-[140px] rounded-full"></div>
-        <div className="absolute top-1/2 -right-40 w-[400px] h-[400px] bg-sky-500/10 blur-[150px] rounded-full"></div>
-      </div>
+  const selectedGuild = guilds.find((g) => g.id === selectedGuildId);
 
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-white/[0.06] bg-[#0b0d13]/80 backdrop-blur-xl flex flex-col">
-        <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-[#5865F2] to-[#805ad5] flex items-center justify-center font-black text-white text-base shadow-md shadow-indigo-500/20">
-              S
+  return (
+    <div className="flex h-screen bg-[#07080c] text-[#dbdee1] selection:bg-indigo-600 selection:text-white overflow-hidden font-sans">
+      {/* 1. Left Icon Rail (72px - Discord & Yeonhong Studio Style) */}
+      <aside className="w-[74px] bg-[#0b0c11] border-r border-white/[0.06] flex flex-col items-center py-3.5 gap-2.5 z-20 flex-shrink-0">
+        {/* Sora Home Icon */}
+        <Link
+          href="/"
+          className="group relative flex h-12 w-12 items-center justify-center rounded-[24px] hover:rounded-[16px] bg-gradient-to-tr from-[#5865F2] to-[#7950f2] text-white transition-all duration-200 shadow-lg shadow-indigo-500/20"
+        >
+          <span className="font-black text-lg">S</span>
+          <span className="absolute left-[82px] z-50 hidden whitespace-nowrap rounded-lg bg-[#18191f] px-3 py-1.5 text-xs font-semibold text-white shadow-xl group-hover:block border border-white/[0.08]">
+            Sora 홈으로 이동
+          </span>
+        </Link>
+
+        <div className="h-[2px] w-8 rounded-full bg-white/[0.08]" />
+
+        {/* Server List */}
+        <div className="flex-1 w-full overflow-y-auto space-y-2.5 flex flex-col items-center px-1.5 scrollbar-none">
+          {guilds.map((g) => {
+            const isSelected = g.id === selectedGuildId;
+            const initials = g.name.substring(0, 2);
+            return (
+              <div key={g.id} className="relative group flex items-center">
+                {/* Active Indicator Pill */}
+                <div
+                  className={`absolute -left-2 w-1 rounded-r-full bg-white transition-all duration-200 ${
+                    isSelected ? "h-10 opacity-100" : "h-2 opacity-0 group-hover:h-5 group-hover:opacity-70"
+                  }`}
+                />
+
+                <button
+                  onClick={() => setSelectedGuildId(g.id)}
+                  className={`relative flex h-12 w-12 items-center justify-center overflow-hidden transition-all duration-200 text-sm font-bold shadow-md ${
+                    isSelected
+                      ? "rounded-[16px] bg-[#5865F2] text-white ring-2 ring-indigo-400/40"
+                      : "rounded-[24px] hover:rounded-[16px] bg-[#1a1b24] text-neutral-300 hover:bg-[#5865F2] hover:text-white"
+                  }`}
+                >
+                  {g.icon ? (
+                    <img
+                      src={`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png?size=128`}
+                      alt={g.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span>{initials}</span>
+                  )}
+                </button>
+
+                {/* Tooltip */}
+                <span className="absolute left-[78px] z-50 hidden whitespace-nowrap rounded-lg bg-[#18191f] px-3 py-1.5 text-xs font-semibold text-white shadow-xl group-hover:block border border-white/[0.08]">
+                  {g.name}
+                </span>
+              </div>
+            );
+          })}
+
+          {/* Add / Invite Button */}
+          <a
+            href="https://discord.com/oauth2/authorize?client_id=1558397761861451806&permissions=8&integration_type=0&scope=bot%20applications.commands"
+            target="_blank"
+            rel="noreferrer"
+            className="group relative flex h-12 w-12 items-center justify-center rounded-[24px] hover:rounded-[16px] bg-[#161720] text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-200 shadow-md border border-white/[0.04]"
+          >
+            <Plus className="h-5 w-5" />
+            <span className="absolute left-[78px] z-50 hidden whitespace-nowrap rounded-lg bg-[#18191f] px-3 py-1.5 text-xs font-semibold text-white shadow-xl group-hover:block border border-white/[0.08]">
+              서버에 Sora 초대하기
+            </span>
+          </a>
+        </div>
+
+        {/* User Avatar & Logout */}
+        {user ? (
+          <div className="relative group flex items-center">
+            <div className="h-11 w-11 rounded-[20px] overflow-hidden bg-neutral-800 border border-white/[0.1] shadow-md">
+              {user.avatar ? (
+                <img
+                  src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=96`}
+                  alt={user.username}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center font-bold text-white text-xs bg-indigo-600">
+                  {user.username?.substring(0, 2)}
+                </div>
+              )}
             </div>
-            <div>
-              <div className="font-bold text-white text-base tracking-tight">Sora Dashboard</div>
-              <div className="text-[11px] text-neutral-400">Koharu Coding Server</div>
+            <span className="absolute left-[78px] z-50 hidden whitespace-nowrap rounded-lg bg-[#18191f] px-3 py-1.5 text-xs font-semibold text-white shadow-xl group-hover:block border border-white/[0.08]">
+              {user.global_name || user.username}
+            </span>
+          </div>
+        ) : (
+          <a
+            href="/api/auth/login"
+            className="flex h-11 w-11 items-center justify-center rounded-[20px] bg-[#5865F2] text-white hover:opacity-90 transition shadow-md"
+            title="Discord 로그인"
+          >
+            <LogIn className="h-5 w-5" />
+          </a>
+        )}
+      </aside>
+
+      {/* 2. Secondary Sidebar / Tab Navigation */}
+      <aside className="w-60 bg-[#0e1017] border-r border-white/[0.06] flex flex-col flex-shrink-0">
+        {/* Guild Header */}
+        <div className="h-16 border-b border-white/[0.06] px-5 flex items-center justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="font-bold text-sm text-white truncate">
+              {selectedGuild ? selectedGuild.name : "서버 선택"}
+            </div>
+            <div className="text-[11px] text-neutral-400 font-mono truncate">
+              ID: {selectedGuildId || "미선택"}
             </div>
           </div>
         </div>
 
-        {/* Server Selector */}
-        <div className="p-4 border-b border-white/[0.06]">
-          <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block mb-2">
-            관리 서버 선택
-          </label>
-          {guilds.length > 0 ? (
-            <select
-              value={selectedGuildId}
-              onChange={(e) => setSelectedGuildId(e.target.value)}
-              className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-indigo-500 transition"
-            >
-              {guilds.map((g) => (
-                <option key={g.id} value={g.id}>
-                  {g.name}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <div className="text-xs text-neutral-500">
-              {user ? "관리자 권한의 서버가 없습니다." : "Discord 로그인이 필요합니다."}
-            </div>
-          )}
-        </div>
-
-        <nav className="p-4 space-y-1.5 flex-1">
+        {/* Navigation Tabs */}
+        <nav className="p-3 space-y-1 overflow-y-auto flex-1">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === "overview" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+              activeTab === "overview"
+                ? "bg-[#5865F2] text-white shadow-md shadow-[#5865F2]/25 font-semibold"
+                : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <Settings className="h-4 w-4" />
-            서버 개요 & 상태
+            <LayoutDashboard className="h-4 w-4" />
+            서버 개요
           </button>
+
           <button
             onClick={() => setActiveTab("verify")}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === "verify" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+              activeTab === "verify"
+                ? "bg-[#5865F2] text-white shadow-md shadow-[#5865F2]/25 font-semibold"
+                : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <Shield className="h-4 w-4" />
-            인증 시스템 관리
+            인증 시스템
           </button>
+
           <button
             onClick={() => setActiveTab("greet")}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === "greet" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+              activeTab === "greet"
+                ? "bg-[#5865F2] text-white shadow-md shadow-[#5865F2]/25 font-semibold"
+                : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <Users className="h-4 w-4" />
-            가입 및 퇴장 안내
+            입장 / 퇴장 안내
           </button>
+
           <button
             onClick={() => setActiveTab("tickets")}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === "tickets" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+              activeTab === "tickets"
+                ? "bg-[#5865F2] text-white shadow-md shadow-[#5865F2]/25 font-semibold"
+                : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <MessageSquare className="h-4 w-4" />
+            <Ticket className="h-4 w-4" />
             고객지원 & 티켓
           </button>
+
           <button
             onClick={() => setActiveTab("wiki")}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === "wiki" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+              activeTab === "wiki"
+                ? "bg-[#5865F2] text-white shadow-md shadow-[#5865F2]/25 font-semibold"
+                : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <BookOpen className="h-4 w-4" />
             서버 위키 문서고
           </button>
+
           <button
             onClick={() => setActiveTab("points")}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === "points" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+              activeTab === "points"
+                ? "bg-[#5865F2] text-white shadow-md shadow-[#5865F2]/25 font-semibold"
+                : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <Award className="h-4 w-4" />
-            포인트 상점 관리
+            <DollarSign className="h-4 w-4" />
+            포인트 & 경제
           </button>
+
           <button
             onClick={() => setActiveTab("policy")}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === "policy" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+              activeTab === "policy"
+                ? "bg-[#5865F2] text-white shadow-md shadow-[#5865F2]/25 font-semibold"
+                : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
             <FileText className="h-4 w-4" />
-            정책 및 이용약관
+            정책 및 약관 뷰어
           </button>
         </nav>
 
-        <div className="p-4 border-t border-white/[0.06] space-y-2 text-xs text-neutral-500">
-          <Link href="/policy" className="block hover:text-neutral-300 transition">
-            개인정보처리방침 (전번/이메일)
-          </Link>
-          <Link href="/terms" className="block hover:text-neutral-300 transition">
-            서비스 이용약관
-          </Link>
-          <Link href="/" className="block hover:text-neutral-300 transition pt-1 text-neutral-400">
-            ← 공식 홈페이지로 이동
+        {/* Footer info */}
+        <div className="p-3 border-t border-white/[0.06] text-[11px] text-neutral-500 flex items-center justify-between">
+          <span>Sora v2.0 CV2</span>
+          <Link href="/policy" className="hover:text-neutral-300">
+            약관 동의 완료
           </Link>
         </div>
       </aside>
 
-      {/* Main Area */}
-      <main className="flex-1 flex flex-col overflow-y-auto">
-        {/* Top Navbar */}
-        <header className="h-16 border-b border-white/[0.06] px-8 flex items-center justify-between bg-[#0b0d13]/50 backdrop-blur-xl">
-          <div className="flex items-center gap-2 text-xs text-neutral-400">
-            <span>대시보드</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-white font-medium capitalize">{activeTab}</span>
+      {/* 3. Main Workspace Area */}
+      <main className="flex-1 flex flex-col bg-[#07080c] min-w-0 overflow-hidden relative">
+        {/* Top Action Bar */}
+        <header className="h-16 border-b border-white/[0.06] bg-[#0b0c11]/80 backdrop-blur-xl px-8 flex items-center justify-between flex-shrink-0 z-10">
+          <div className="flex items-center gap-3">
+            <h1 className="text-base font-bold text-white tracking-tight">
+              {activeTab === "overview" && "서버 대시보드 개요"}
+              {activeTab === "verify" && "4단계 보안 인증 설정"}
+              {activeTab === "greet" && "환영 및 작별 메시지 설정"}
+              {activeTab === "tickets" && "고객지원 티켓 시스템"}
+              {activeTab === "wiki" && "지식 베이스 & 위키 관리"}
+              {activeTab === "points" && "포인트 및 가상 경제 설정"}
+              {activeTab === "policy" && "개인정보 처리방침 및 약관"}
+            </h1>
             {saveStatus && (
-              <span className="ml-4 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
+              <span className="rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 text-xs font-medium text-emerald-400 animate-fade-in">
                 {saveStatus}
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-4">
-            {user ? (
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-white">{user.username}</span>
-                <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold text-emerald-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  관리자 연결됨
-                </span>
-              </div>
-            ) : (
-              <a
-                href="/api/auth/login"
+          <div className="flex items-center gap-3">
+            {selectedGuild && (
+              <button
+                onClick={() => saveConfig(guildConfig)}
                 className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#5865F2] to-[#4752c4] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#5865F2]/20 hover:opacity-95 transition"
               >
-                <LogIn className="h-3.5 w-3.5" />
-                Discord 계정 로그인
-              </a>
+                <Save className="h-3.5 w-3.5" />
+                설정 저장
+              </button>
             )}
           </div>
         </header>
 
-        {/* Content Tabs */}
-        <div className="p-8 max-w-5xl space-y-8">
-          {/* 1. OVERVIEW */}
-          {activeTab === "overview" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">서버 운영 종합 현황</h2>
-                <p className="text-xs text-neutral-400 mt-1">
-                  선택된 서버: <strong className="text-white">{guilds.find((g) => g.id === selectedGuildId)?.name || selectedGuildId}</strong>
-                </p>
+        {/* Content Body */}
+        <div className="flex-1 overflow-y-auto p-8 scrollbar-thin scrollbar-thumb-white/[0.08]">
+          {!user ? (
+            /* Login Required Empty State (Yeonhong Studio Style) */
+            <div className="flex h-full flex-col items-center justify-center text-center max-w-md mx-auto py-12">
+              <div className="h-16 w-16 rounded-3xl bg-gradient-to-tr from-[#5865F2] to-[#805ad5] flex items-center justify-center text-white mb-6 shadow-xl shadow-indigo-500/25">
+                <Bot className="h-8 w-8" />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-5">
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">인증 상태</div>
-                  <div className="text-2xl font-bold text-emerald-400 mt-2 flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5" />
-                    {guildConfig?.verification?.enabled ? "활성화" : "비활성화"}
-                  </div>
-                  <div className="text-xs text-neutral-500 mt-2">
-                    {guildConfig?.verification?.methods?.join(", ") || "설정 없음"}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-5">
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">입/퇴장 알림</div>
-                  <div className="text-2xl font-bold text-white mt-2">
-                    {guildConfig?.welcome?.enabled ? "ON" : "OFF"} / {guildConfig?.goodbye?.enabled ? "ON" : "OFF"}
-                  </div>
-                  <div className="text-xs text-neutral-500 mt-2">자동 환영 메시지</div>
-                </div>
-
-                <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-5">
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">위키 문서</div>
-                  <div className="text-2xl font-bold text-sky-400 mt-2">
-                    {guildConfig?.wikiDocuments?.length || 0}건
-                  </div>
-                  <div className="text-xs text-neutral-500 mt-2">버전 및 상호 링크</div>
-                </div>
-
-                <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-5">
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">상점 품목 수</div>
-                  <div className="text-2xl font-bold text-amber-400 mt-2">
-                    {guildConfig?.shopItems?.length || 0}개
-                  </div>
-                  <div className="text-xs text-neutral-500 mt-2">포인트 상점</div>
-                </div>
-              </div>
-
-              {/* Bot Consent Notice Banner */}
-              <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-4 text-xs text-neutral-300 flex items-center justify-between">
-                <span>
-                  💡 <strong>포괄적 약관 동의 안내:</strong> Sora 봇의 모든 기능을 이용하시면{" "}
-                  <Link href="/policy" className="text-indigo-400 underline font-semibold">개인정보처리방침</Link> 및{" "}
-                  <Link href="/terms" className="text-indigo-400 underline font-semibold">서비스 이용약관</Link>에 동의하시는 것으로 간주합니다.
-                </span>
-                <Link href="/policy" className="text-indigo-400 text-xs font-semibold underline shrink-0 ml-4">
-                  정책 전문 보기 →
-                </Link>
-              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">디스코드 로그인이 필요합니다</h2>
+              <p className="text-sm text-neutral-400 mb-8 leading-relaxed">
+                관리자 권한을 가진 디스코드 계정으로 로그인하여 서버의 모든 Sora 봇 기능을 직접 웹에서 제어하세요.
+              </p>
+              <a
+                href="/api/auth/login"
+                className="flex items-center gap-2.5 rounded-2xl bg-[#5865F2] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30 hover:opacity-95 transition"
+              >
+                <LogIn className="h-4 w-4" />
+                디스코드로 로그인하기
+              </a>
             </div>
-          )}
+          ) : !selectedGuild ? (
+            <div className="flex h-full flex-col items-center justify-center text-center max-w-md mx-auto py-12">
+              <Shield className="h-12 w-12 text-neutral-600 mb-4" />
+              <h2 className="text-xl font-bold text-white mb-2">관리 중인 서버를 선택하세요</h2>
+              <p className="text-xs text-neutral-400 mb-6">
+                왼쪽 서버 아이콘 레일에서 관리할 서버를 클릭하여 설정을 진행할 수 있습니다.
+              </p>
+            </div>
+          ) : (
+            <div className="max-w-5xl mx-auto space-y-6">
+              {/* TAB 1: OVERVIEW */}
+              {activeTab === "overview" && (
+                <div className="space-y-6">
+                  {/* Metric Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-5">
+                      <div className="text-xs font-semibold text-neutral-400 mb-1">인증 시스템 상태</div>
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+                        <span className="text-lg font-bold text-white">
+                          {guildConfig?.verification?.enabled ? "정상 작동 중" : "비활성화"}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-neutral-500 mt-2">
+                        타입: {guildConfig?.verification?.type || "전화번호/이메일"}
+                      </div>
+                    </div>
 
-          {/* 2. VERIFY SETTINGS */}
-          {activeTab === "verify" && guildConfig && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-white tracking-tight">인증 시스템 상세 설정</h2>
-                  <p className="text-xs text-neutral-400 mt-1">
-                    Sendwich 휴대폰 인증, Resend 이메일 인증, 버튼, 캡챠 설정을 웹에서 즉시 변경합니다.
-                  </p>
-                </div>
-                <button
-                  onClick={() => saveConfig({ verification: guildConfig.verification })}
-                  className="flex items-center gap-2 bg-gradient-to-r from-[#5865F2] to-[#4752c4] hover:opacity-95 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-[#5865F2]/25 transition"
-                >
-                  <Save className="h-4 w-4" />
-                  설정 저장
-                </button>
-              </div>
+                    <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-5">
+                      <div className="text-xs font-semibold text-neutral-400 mb-1">티켓 시스템</div>
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-indigo-400"></span>
+                        <span className="text-lg font-bold text-white">
+                          {guildConfig?.tickets?.enabled ? "활성화" : "비활성화"}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-neutral-500 mt-2">
+                        누적 접수: {guildConfig?.tickets?.totalCount || 0}건
+                      </div>
+                    </div>
 
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-bold text-white text-base">인증 시스템 활성화</div>
-                    <div className="text-xs text-neutral-400">서버 입장 멤버에게 인증 패널 노출</div>
+                    <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-5">
+                      <div className="text-xs font-semibold text-neutral-400 mb-1">위키 문서 수</div>
+                      <div className="text-lg font-bold text-white">
+                        {guildConfig?.wiki?.documents ? Object.keys(guildConfig.wiki.documents).length : 0}개
+                      </div>
+                      <div className="text-[11px] text-neutral-500 mt-2">
+                        카테고리: {guildConfig?.wiki?.categories?.length || 1}개
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-5">
+                      <div className="text-xs font-semibold text-neutral-400 mb-1">복권 누적 당첨금</div>
+                      <div className="text-lg font-bold text-amber-400">
+                        {(guildConfig?.points?.lotteryPool || 50000).toLocaleString()} P
+                      </div>
+                      <div className="text-[11px] text-neutral-500 mt-2">
+                        출석 보상: {guildConfig?.points?.attendanceReward || 100} P
+                      </div>
+                    </div>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={guildConfig.verification?.enabled ?? false}
-                    onChange={(e) =>
-                      setGuildConfig({
-                        ...guildConfig,
-                        verification: { ...guildConfig.verification, enabled: e.target.checked },
-                      })
-                    }
-                    className="h-5 w-5 accent-indigo-500 rounded cursor-pointer"
-                  />
-                </div>
 
-                <div className="space-y-3">
-                  <label className="text-xs font-bold text-white uppercase tracking-wider block">적용할 인증 수단</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                    {["phone", "email", "button", "captcha"].map((method) => {
-                      const labels: any = {
-                        phone: "📱 Sendwich 휴대폰 SMS 점유 인증 (동의 화면 필수)",
-                        email: "✉️ Resend 6자리 이메일 코드 인증 (동의 화면 필수)",
-                        button: "✅ 버튼 간편 즉시 인증",
-                        captcha: "🤖 캡챠 왜곡 이미지 인증",
-                      };
-                      const isChecked = guildConfig.verification?.methods?.includes(method) ?? false;
-                      return (
-                        <label key={method} className="flex items-center gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.05] cursor-pointer hover:bg-white/[0.06] transition">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) => {
-                              const cur = guildConfig.verification?.methods || [];
-                              const updated = e.target.checked ? [...cur, method] : cur.filter((m: string) => m !== method);
-                              setGuildConfig({
-                                ...guildConfig,
-                                verification: { ...guildConfig.verification, methods: updated },
-                              });
-                            }}
-                            className="h-4 w-4 accent-indigo-500 rounded"
-                          />
-                          <span className="text-xs font-medium">{labels[method]}</span>
+                  {/* Server Details Card */}
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-6">
+                    <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                      <Settings className="h-4 w-4 text-indigo-400" />
+                      서버 기본 정보
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div>
+                        <span className="text-neutral-500">서버 이름</span>
+                        <div className="font-semibold text-white mt-1">{selectedGuild.name}</div>
+                      </div>
+                      <div>
+                        <span className="text-neutral-500">길드 고유 ID</span>
+                        <div className="font-mono text-neutral-300 mt-1">{selectedGuild.id}</div>
+                      </div>
+                      <div>
+                        <span className="text-neutral-500">UI 규격</span>
+                        <div className="text-emerald-400 font-semibold mt-1">Discord Components V2 (Flag 32768)</div>
+                      </div>
+                      <div>
+                        <span className="text-neutral-500">개인정보 보호</span>
+                        <div className="text-indigo-400 font-semibold mt-1">단방향 SHA-256 해시 즉시 파기</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: VERIFICATION */}
+              {activeTab === "verify" && (
+                <div className="space-y-6">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-6 space-y-5">
+                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
+                      <div>
+                        <h3 className="text-sm font-bold text-white">보안 인증 시스템 사용</h3>
+                        <p className="text-xs text-neutral-400 mt-0.5">
+                          새로운 멤버가 서버에 입장했을 때 채널 이용 전 본인 확인을 요구합니다.
+                        </p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={guildConfig?.verification?.enabled ?? true}
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              verification: { ...guildConfig?.verification, enabled: e.target.checked },
+                            })
+                          }
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#5865F2]"></div>
+                      </label>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-neutral-300 block mb-1.5">
+                          인증 완료 시 지급할 역할 ID
                         </label>
-                      );
-                    })}
+                        <input
+                          type="text"
+                          value={guildConfig?.verification?.roleId || ""}
+                          placeholder="예: 1339604814631534667 (@유저)"
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              verification: { ...guildConfig?.verification, roleId: e.target.value },
+                            })
+                          }
+                          className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-semibold text-neutral-300 block mb-1.5">
+                          인증 패널 채널 ID
+                        </label>
+                        <input
+                          type="text"
+                          value={guildConfig?.verification?.channelId || ""}
+                          placeholder="예: 1339604814631534667 (#인증)"
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              verification: { ...guildConfig?.verification, channelId: e.target.value },
+                            })
+                          }
+                          className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="border-t border-white/[0.06] pt-4 space-y-3">
+                      <div className="text-xs font-bold text-neutral-300">사전 약관 동의 및 법률 준수 정책</div>
+                      <div className="rounded-xl bg-[#141620] border border-white/[0.06] p-4 text-xs text-neutral-300 space-y-2">
+                        <div className="flex items-center gap-2 text-indigo-400 font-semibold">
+                          <CheckCircle2 className="h-4 w-4" />
+                          휴대폰 / 이메일 분리형 동의 컨테이너 자동 적용됨
+                        </div>
+                        <p className="text-[11px] text-neutral-400 leading-relaxed">
+                          버튼 클릭 시 전화번호/이메일을 즉시 요구하지 않으며, 각 수단 전용 개인정보 처리방침과
+                          이용약관 카드를 먼저 띄우고 "동의하고 계속하기"를 눌러야만 입력 모달이 열립니다.
+                          (안내 문구: "동의하시면 개인정보 처리방침 및 이용약관에 동의하시는 것으로 간주합니다")
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-semibold text-white block mb-1">인증 임베드 전송 채널 ID</label>
-                    <input
-                      type="text"
-                      placeholder="채널 ID (Snowflake)"
-                      value={guildConfig.verification?.channelId || ""}
-                      onChange={(e) =>
-                        setGuildConfig({
-                          ...guildConfig,
-                          verification: { ...guildConfig.verification, channelId: e.target.value },
-                        })
-                      }
-                      className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-                    />
+              {/* TAB 3: TICKETS */}
+              {activeTab === "tickets" && (
+                <div className="space-y-6">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-6 space-y-5">
+                    <h3 className="text-sm font-bold text-white border-b border-white/[0.06] pb-4">
+                      고객지원 티켓 설정
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-neutral-300 block mb-1.5">
+                          티켓 채널 생성 카테고리 ID
+                        </label>
+                        <input
+                          type="text"
+                          value={guildConfig?.tickets?.categoryId || ""}
+                          placeholder="디스코드 카테고리 ID"
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              tickets: { ...guildConfig?.tickets, categoryId: e.target.value },
+                            })
+                          }
+                          className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-neutral-300 block mb-1.5">
+                          상담 관리자(스태프) 역할 ID
+                        </label>
+                        <input
+                          type="text"
+                          value={guildConfig?.tickets?.staffRoleId || ""}
+                          placeholder="스태프 역할 ID"
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              tickets: { ...guildConfig?.tickets, staffRoleId: e.target.value },
+                            })
+                          }
+                          className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        />
+                      </div>
+                    </div>
                   </div>
+                </div>
+              )}
 
-                  <div>
-                    <label className="text-xs font-semibold text-white block mb-1">인증 성공 시 지급할 역할 ID</label>
-                    <input
-                      type="text"
-                      placeholder="역할 ID (Snowflake)"
-                      value={guildConfig.verification?.roleMappings?.phone || guildConfig.verification?.roleMappings?.email || guildConfig.verification?.roleMappings?.button || ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const roleMappings: any = {};
-                        (guildConfig.verification?.methods || []).forEach((m: string) => {
-                          roleMappings[m] = val;
-                        });
+              {/* TAB 4: WIKI */}
+              {activeTab === "wiki" && (
+                <div className="space-y-6">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-6">
+                    <h3 className="text-sm font-bold text-white mb-4">새 위키 문서 등록</h3>
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <input
+                        type="text"
+                        placeholder="문서 슬러그 (예: server-rules)"
+                        value={newWikiSlug}
+                        onChange={(e) => setNewWikiSlug(e.target.value)}
+                        className="bg-[#13151f] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-white"
+                      />
+                      <input
+                        type="text"
+                        placeholder="문서 제목 (예: 서버 공식 이용규칙)"
+                        value={newWikiTitle}
+                        onChange={(e) => setNewWikiTitle(e.target.value)}
+                        className="bg-[#13151f] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-white"
+                      />
+                    </div>
+                    <textarea
+                      rows={4}
+                      placeholder="마크다운 문서 내용을 입력하세요."
+                      value={newWikiContent}
+                      onChange={(e) => setNewWikiContent(e.target.value)}
+                      className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl p-3.5 text-xs text-white mb-3"
+                    />
+                    <button
+                      onClick={() => {
+                        if (!newWikiSlug || !newWikiTitle) return;
+                        const docs = guildConfig?.wiki?.documents || {};
+                        docs[newWikiSlug] = {
+                          slug: newWikiSlug,
+                          title: newWikiTitle,
+                          content: newWikiContent,
+                          category: newWikiCategory,
+                          authorId: user?.id || "admin",
+                          updatedAt: new Date().toISOString(),
+                          version: 1,
+                        };
                         setGuildConfig({
                           ...guildConfig,
-                          verification: { ...guildConfig.verification, roleMappings },
+                          wiki: { ...guildConfig?.wiki, documents: docs },
                         });
+                        setNewWikiSlug("");
+                        setNewWikiTitle("");
+                        setNewWikiContent("");
                       }}
-                      className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-                    />
+                      className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-500 transition"
+                    >
+                      위키 문서 저장
+                    </button>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {/* 3. GREETINGS */}
-          {activeTab === "greet" && guildConfig && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-white tracking-tight">가입 및 퇴장 안내 설정</h2>
-                  <p className="text-xs text-neutral-400 mt-1">
-                    신규 멤버 입장 및 퇴장 시 안내 문구와 대상 채널을 설정합니다.
-                  </p>
-                </div>
-                <button
-                  onClick={() => saveConfig({ welcome: guildConfig.welcome, goodbye: guildConfig.goodbye })}
-                  className="flex items-center gap-2 bg-gradient-to-r from-[#5865F2] to-[#4752c4] hover:opacity-95 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-[#5865F2]/25 transition"
-                >
-                  <Save className="h-4 w-4" />
-                  설정 저장
-                </button>
-              </div>
-
-              {/* Welcome Config */}
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-bold text-white">가입 환영 안내 (Welcome)</div>
-                  <input
-                    type="checkbox"
-                    checked={guildConfig.welcome?.enabled ?? false}
-                    onChange={(e) =>
-                      setGuildConfig({
-                        ...guildConfig,
-                        welcome: { ...guildConfig.welcome, enabled: e.target.checked },
-                      })
-                    }
-                    className="h-5 w-5 accent-indigo-500 rounded cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-white block mb-1">환영 메시지 전송 채널 ID</label>
-                  <input
-                    type="text"
-                    value={guildConfig.welcome?.channelId || ""}
-                    onChange={(e) =>
-                      setGuildConfig({
-                        ...guildConfig,
-                        welcome: { ...guildConfig.welcome, channelId: e.target.value },
-                      })
-                    }
-                    placeholder="채널 ID"
-                    className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl px-4 py-2 text-xs text-white focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-white block mb-1">환영 문구 템플릿 ({'{user}'}, {'{server}'}, {'{count}'})</label>
-                  <textarea
-                    rows={3}
-                    value={guildConfig.welcome?.messageTemplate || ""}
-                    onChange={(e) =>
-                      setGuildConfig({
-                        ...guildConfig,
-                        welcome: { ...guildConfig.welcome, messageTemplate: e.target.value },
-                      })
-                    }
-                    className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl p-3 text-xs text-white focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Goodbye Config */}
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-bold text-white">퇴장 안내 (Goodbye)</div>
-                  <input
-                    type="checkbox"
-                    checked={guildConfig.goodbye?.enabled ?? false}
-                    onChange={(e) =>
-                      setGuildConfig({
-                        ...guildConfig,
-                        goodbye: { ...guildConfig.goodbye, enabled: e.target.checked },
-                      })
-                    }
-                    className="h-5 w-5 accent-indigo-500 rounded cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-white block mb-1">퇴장 메시지 전송 채널 ID</label>
-                  <input
-                    type="text"
-                    value={guildConfig.goodbye?.channelId || ""}
-                    onChange={(e) =>
-                      setGuildConfig({
-                        ...guildConfig,
-                        goodbye: { ...guildConfig.goodbye, channelId: e.target.value },
-                      })
-                    }
-                    placeholder="채널 ID"
-                    className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl px-4 py-2 text-xs text-white focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-white block mb-1">퇴장 문구 템플릿</label>
-                  <textarea
-                    rows={2}
-                    value={guildConfig.goodbye?.messageTemplate || ""}
-                    onChange={(e) =>
-                      setGuildConfig({
-                        ...guildConfig,
-                        goodbye: { ...guildConfig.goodbye, messageTemplate: e.target.value },
-                      })
-                    }
-                    className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl p-3 text-xs text-white focus:outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 4. TICKETS */}
-          {activeTab === "tickets" && guildConfig && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-white tracking-tight">문의(티켓) 시스템 구성</h2>
-                  <p className="text-xs text-neutral-400 mt-1">티켓 패널 채널, 상위 카테고리, 담당 역할을 지정합니다.</p>
-                </div>
-                <button
-                  onClick={() => saveConfig({ tickets: guildConfig.tickets })}
-                  className="flex items-center gap-2 bg-gradient-to-r from-[#5865F2] to-[#4752c4] hover:opacity-95 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-[#5865F2]/25 transition"
-                >
-                  <Save className="h-4 w-4" />
-                  설정 저장
-                </button>
-              </div>
-
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-xs font-semibold text-white block mb-1">패널 전송 채널 ID</label>
-                    <input
-                      type="text"
-                      value={guildConfig.tickets?.channelId || ""}
-                      onChange={(e) =>
-                        setGuildConfig({
-                          ...guildConfig,
-                          tickets: { ...guildConfig.tickets, channelId: e.target.value },
-                        })
-                      }
-                      placeholder="채널 ID"
-                      className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-white block mb-1">티켓 생성 카테고리 ID</label>
-                    <input
-                      type="text"
-                      value={guildConfig.tickets?.categoryId || ""}
-                      onChange={(e) =>
-                        setGuildConfig({
-                          ...guildConfig,
-                          tickets: { ...guildConfig.tickets, categoryId: e.target.value },
-                        })
-                      }
-                      placeholder="카테고리 ID"
-                      className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-white block mb-1">고객지원 담당자 역할 ID</label>
-                    <input
-                      type="text"
-                      value={guildConfig.tickets?.supportRoleId || ""}
-                      onChange={(e) =>
-                        setGuildConfig({
-                          ...guildConfig,
-                          tickets: { ...guildConfig.tickets, supportRoleId: e.target.value },
-                        })
-                      }
-                      placeholder="역할 ID"
-                      className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 5. WIKI */}
-          {activeTab === "wiki" && guildConfig && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">서버 위키 문서고</h2>
-                <p className="text-xs text-neutral-400 mt-1">웹에서 직접 위키 문서를 작성하고 열람할 수 있습니다.</p>
-              </div>
-
-              {/* Add New Document */}
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-4">
-                <h3 className="font-bold text-white text-sm">새 위키 문서 작성</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <input
-                    type="text"
-                    placeholder="슬러그 (영문/하이픈, 예: bot-guide)"
-                    value={newWikiSlug}
-                    onChange={(e) => setNewWikiSlug(e.target.value)}
-                    className="bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="문서 제목"
-                    value={newWikiTitle}
-                    onChange={(e) => setNewWikiTitle(e.target.value)}
-                    className="bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="분류 (예: 운영규칙, 개발)"
-                    value={newWikiCategory}
-                    onChange={(e) => setNewWikiCategory(e.target.value)}
-                    className="bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-                <textarea
-                  rows={4}
-                  placeholder="문서 본문 내용 (Markdown 지원)..."
-                  value={newWikiContent}
-                  onChange={(e) => setNewWikiContent(e.target.value)}
-                  className="w-full bg-[#0e1017] border border-white/[0.08] rounded-xl p-3 text-xs text-white focus:outline-none"
-                />
-                <button
-                  onClick={() => {
-                    if (!newWikiSlug || !newWikiTitle || !newWikiContent) return;
-                    const doc = {
-                      id: `wiki_${Date.now()}`,
-                      guildId: selectedGuildId,
-                      slug: newWikiSlug.trim().toLowerCase(),
-                      title: newWikiTitle.trim(),
-                      content: newWikiContent.trim(),
-                      category: newWikiCategory.trim() || "일반",
-                      tags: ["웹작성"],
-                      version: 1,
-                      authorId: user?.id || "web_admin",
-                      createdAt: new Date().toISOString(),
-                      updatedAt: new Date().toISOString(),
-                      links: [],
-                      backlinks: [],
-                      history: [],
-                    };
-                    const updatedDocs = [...(guildConfig.wikiDocuments || []), doc];
-                    saveConfig({ wikiDocuments: updatedDocs });
-                    setNewWikiSlug("");
-                    setNewWikiTitle("");
-                    setNewWikiContent("");
-                  }}
-                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-xl text-xs font-bold text-white transition"
-                >
-                  <Plus className="h-4 w-4" />
-                  문서 발행
-                </button>
-              </div>
-
-              {/* Document List */}
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-3">
-                <h3 className="font-bold text-white text-sm">보관된 위키 문서 목록 ({guildConfig.wikiDocuments?.length || 0}건)</h3>
-                <div className="divide-y divide-white/[0.06] text-xs">
-                  {(guildConfig.wikiDocuments || []).map((doc: any) => (
-                    <div key={doc.slug} className="py-3 flex items-center justify-between">
+              {/* TAB 5: POINTS */}
+              {activeTab === "points" && (
+                <div className="space-y-6">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-6 space-y-4">
+                    <h3 className="text-sm font-bold text-white border-b border-white/[0.06] pb-3">
+                      포인트 및 경제 밸런스 설정
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <div className="font-semibold text-white">{doc.title} (<code className="text-indigo-400">{doc.slug}</code>)</div>
-                        <div className="text-neutral-400">분류: {doc.category} • 버전: v{doc.version}</div>
+                        <label className="text-xs font-semibold text-neutral-300 block mb-1">
+                          일일 출석 보상 (P)
+                        </label>
+                        <input
+                          type="number"
+                          value={guildConfig?.points?.attendanceReward || 100}
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              points: { ...guildConfig?.points, attendanceReward: parseInt(e.target.value) || 0 },
+                            })
+                          }
+                          className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-white"
+                        />
                       </div>
-                      <button
-                        onClick={() => {
-                          const filtered = guildConfig.wikiDocuments.filter((d: any) => d.slug !== doc.slug);
-                          saveConfig({ wikiDocuments: filtered });
-                        }}
-                        className="text-neutral-500 hover:text-red-400 transition"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 6. POINTS SHOP */}
-          {activeTab === "points" && guildConfig && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">포인트 상점 상품 관리</h2>
-                <p className="text-xs text-neutral-400 mt-1">유저가 포인트로 구매할 수 있는 역할 및 혜택 상품을 등록합니다.</p>
-              </div>
-
-              {/* Add Shop Item */}
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-4">
-                <h3 className="font-bold text-white text-sm">새 상점 상품 등록</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <input
-                    type="text"
-                    placeholder="상품명 (예: VIP 역할)"
-                    value={newShopName}
-                    onChange={(e) => setNewShopName(e.target.value)}
-                    className="bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                  />
-                  <input
-                    type="number"
-                    placeholder="가격 (P)"
-                    value={newShopPrice}
-                    onChange={(e) => setNewShopPrice(Number(e.target.value))}
-                    className="bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="상품 설명"
-                    value={newShopDesc}
-                    onChange={(e) => setNewShopDesc(e.target.value)}
-                    className="bg-[#0e1017] border border-white/[0.08] rounded-xl p-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-                <button
-                  onClick={() => {
-                    if (!newShopName) return;
-                    const item = {
-                      id: `item_${Date.now()}`,
-                      guildId: selectedGuildId,
-                      name: newShopName.trim(),
-                      price: newShopPrice,
-                      description: newShopDesc.trim() || "상점 상품",
-                    };
-                    const updated = [...(guildConfig.shopItems || []), item];
-                    saveConfig({ shopItems: updated });
-                    setNewShopName("");
-                    setNewShopDesc("");
-                  }}
-                  className="flex items-center gap-2 bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded-xl text-xs font-bold text-white transition"
-                >
-                  <Plus className="h-4 w-4" />
-                  상품 추가
-                </button>
-              </div>
-
-              {/* Shop Item List */}
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-3">
-                <h3 className="font-bold text-white text-sm">등록된 상점 품목 ({guildConfig.shopItems?.length || 0}개)</h3>
-                <div className="divide-y divide-white/[0.06] text-xs">
-                  {(guildConfig.shopItems || []).map((it: any) => (
-                    <div key={it.id} className="py-3 flex items-center justify-between">
                       <div>
-                        <div className="font-semibold text-white">{it.name} — <span className="text-amber-400 font-bold">{it.price.toLocaleString()} P</span></div>
-                        <div className="text-neutral-400">{it.description}</div>
+                        <label className="text-xs font-semibold text-neutral-300 block mb-1">
+                          복권 1장 가격 (P)
+                        </label>
+                        <input
+                          type="number"
+                          value={guildConfig?.points?.lotteryPrice || 500}
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              points: { ...guildConfig?.points, lotteryPrice: parseInt(e.target.value) || 0 },
+                            })
+                          }
+                          className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-white"
+                        />
                       </div>
-                      <button
-                        onClick={() => {
-                          const filtered = guildConfig.shopItems.filter((i: any) => i.id !== it.id);
-                          saveConfig({ shopItems: filtered });
-                        }}
-                        className="text-neutral-500 hover:text-red-400 transition"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div>
+                        <label className="text-xs font-semibold text-neutral-300 block mb-1">
+                          도박 최대 베팅금액 (P)
+                        </label>
+                        <input
+                          type="number"
+                          value={guildConfig?.points?.maxGambleBet || 50000}
+                          onChange={(e) =>
+                            setGuildConfig({
+                              ...guildConfig,
+                              points: { ...guildConfig?.points, maxGambleBet: parseInt(e.target.value) || 0 },
+                            })
+                          }
+                          className="w-full bg-[#13151f] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-white"
+                        />
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 7. POLICY TAB IN DASHBOARD */}
-          {activeTab === "policy" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">개인정보 처리방침 및 이용약관</h2>
-                <p className="text-xs text-neutral-400 mt-1">
-                  Sora 서비스 이용 시 적용되는 데이터 수집 규정 및 법적 고지사항입니다.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-4">
-                <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                  <Shield className="h-4 w-4" />
-                  포괄적 서비스 이용 동의 고지
-                </div>
-                <p className="text-xs text-neutral-300 leading-relaxed">
-                  이용자가 Sora 봇의 모든 기능(슬래시 명령어, 인증 버튼, 모달 입력, 티켓 및 웹 대시보드)을 사용하는 경우,
-                  본 개인정보 처리방침 및 서비스 이용약관에 동의하시는 것으로 간주합니다.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.05] space-y-2">
-                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs">
-                      <Phone className="h-4 w-4" />
-                      휴대폰 번호 인증 정책 (Sendwich)
-                    </div>
-                    <p className="text-[11px] text-neutral-400 leading-relaxed">
-                      SMS 발신 번호 점유 확인을 수행하며, <strong>인증 성공 즉시 원본 번호는 영구 파기</strong>됩니다. 중복 가입 방지용 단방향 해시(SHA-256)만 보관됩니다.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.05] space-y-2">
-                    <div className="flex items-center gap-2 text-sky-400 font-bold text-xs">
-                      <Mail className="h-4 w-4" />
-                      이메일 인증 정책 (Resend)
-                    </div>
-                    <p className="text-[11px] text-neutral-400 leading-relaxed">
-                      1회용 6자리 인증번호(OTP)를 발송하여 본인 여부를 확인합니다. <strong>인증 완료 즉시 영구 파기</strong>되며 5분 후 자동 소멸합니다.
-                    </p>
                   </div>
                 </div>
+              )}
 
-                <div className="pt-2">
-                  <Link
-                    href="/policy"
-                    className="inline-flex items-center gap-2 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition"
-                  >
-                    정책 전문 전체 열람하기 →
-                  </Link>
+              {/* TAB 6: POLICY VIEWER */}
+              {activeTab === "policy" && (
+                <div className="rounded-2xl border border-white/[0.06] bg-[#0e1017]/90 p-6 space-y-4">
+                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                    <h3 className="text-sm font-bold text-white">공식 정책 & 법적 고지 전문</h3>
+                    <Link
+                      href="/policy"
+                      target="_blank"
+                      className="text-xs text-indigo-400 hover:underline flex items-center gap-1"
+                    >
+                      전용 탭에서 크게 보기
+                      <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
+                  <div className="text-xs text-neutral-300 leading-relaxed space-y-3">
+                    <div className="p-4 rounded-xl bg-[#141620] border border-white/[0.04]">
+                      <div className="font-bold text-white mb-1">1. 개인정보 처리방침 (휴대폰 인증)</div>
+                      <p className="text-[11px] text-neutral-400">
+                        수집 항목: 휴대전화 번호 (SMS 발송용). 목적: 중복 계정 방지 및 본인 확인. 보관: 확인 즉시
+                        단방향 SHA-256 해시값만 저장 후 원본 즉시 파기. 제3자 제공: Sendwich API.
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-[#141620] border border-white/[0.04]">
+                      <div className="font-bold text-white mb-1">2. 개인정보 처리방침 (이메일 인증)</div>
+                      <p className="text-[11px] text-neutral-400">
+                        수집 항목: 이메일 주소. 목적: 공식 6자리 일회용 인증 코드 발송. 보관: 인증 성공 즉시 원본
+                        폐기. 제3자 제공: Resend API (발송 도메인: admin@koharu.live).
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-[#141620] border border-white/[0.04]">
+                      <div className="font-bold text-white mb-1">3. 서비스 이용약관 및 동의 규정</div>
+                      <p className="text-[11px] text-neutral-400">
+                        본 봇의 모든 기능을 이용하거나 인증 버튼을 클릭하여 진행할 경우, 상기 명시된 개인정보
+                        처리방침 및 서비스 이용약관에 정식 동의하신 것으로 간주합니다.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>
