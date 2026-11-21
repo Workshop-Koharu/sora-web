@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Misc
+.DS_Store
+*.pem
+
+# Environment variables
+.env*
+!.env.example
+
+# Strict user rule: exclude all .txt and .md files except README.md
+*.txt
+*.md
+!README.md
