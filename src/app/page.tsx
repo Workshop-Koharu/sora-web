@@ -19,30 +19,38 @@ import {
   Sparkles,
   Server,
   Zap,
+  HelpCircle,
+  Clock,
+  Layers,
+  ChevronDown,
+  Terminal,
 } from "lucide-react";
 
 export default function Home() {
-  const [activeMockTab, setActiveMockTab] = useState<"attendance" | "streak" | "quest" | "verify" | "protection">("attendance");
+  // Simulator state (Atlas 04 체험 exact replicate)
+  const [activeSimTab, setActiveSimTab] = useState<"phone" | "email" | "attendance" | "protect">("phone");
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   const inviteUrl =
     "https://discord.com/oauth2/authorize?client_id=1558397761861451806&permissions=8&integration_type=0&scope=bot%20applications.commands";
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0a0b0e] text-[#dbdee1] selection:bg-indigo-600 selection:text-white font-sans relative">
-      {/* Background Subtle Grid (Atlas Style - NO NEON) */}
+    <div className="flex min-h-screen flex-col bg-[#0c0d12] text-[#dbdee1] selection:bg-indigo-600 selection:text-white font-sans relative">
+      {/* Background Subtle Grid (Atlas Style - Zero Neon) */}
       <div
-        className="fixed inset-0 pointer-events-none -z-10 opacity-40"
+        className="fixed inset-0 pointer-events-none -z-10 opacity-30"
         style={{
           backgroundImage: "radial-gradient(#ffffff18 1px, transparent 1px)",
           backgroundSize: "28px 28px",
         }}
       />
 
-      {/* Top Header (Atlas Exact Layout) */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0a0b0e]/95 backdrop-blur-md">
+      {/* 1. Header (Atlas 01~08 Style + Yeonhong clean studio branding) */}
+      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0c0d12]/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
-          {/* Logo & Name */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-xl bg-[#141622] border border-white/[0.08] p-1 flex items-center justify-center overflow-hidden">
+          {/* Logo & Brand */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="h-8 w-8 rounded-xl bg-[#161824] border border-white/[0.08] p-1 flex items-center justify-center overflow-hidden">
               <img src="/assets/logo-sora.png" alt="Sora" className="h-full w-full object-contain" />
             </div>
             <div className="flex items-center gap-2">
@@ -53,7 +61,7 @@ export default function Home() {
             </div>
           </Link>
 
-          {/* Center Nav: 01 기능 지도, 02 서버 보안, 03 위키 지식, 04 체험, 05 포인트, 06 대시보드, 08 정책 */}
+          {/* Center Navigation (Atlas 01~08 style) */}
           <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold text-neutral-400">
             <a href="#features" className="hover:text-white transition flex items-center gap-1.5">
               <span className="text-[10px] font-mono text-neutral-500">01</span>
@@ -61,9 +69,13 @@ export default function Home() {
             </a>
             <a href="#security" className="hover:text-white transition flex items-center gap-1.5">
               <span className="text-[10px] font-mono text-neutral-500">02</span>
-              서버 보안
+              지키기
             </a>
-            <a href="#demo" className="hover:text-white transition flex items-center gap-1.5">
+            <a href="#economy" className="hover:text-white transition flex items-center gap-1.5">
+              <span className="text-[10px] font-mono text-neutral-500">03</span>
+              키우기
+            </a>
+            <a href="#experience" className="hover:text-white transition flex items-center gap-1.5">
               <span className="text-[10px] font-mono text-neutral-500">04</span>
               체험
             </a>
@@ -71,13 +83,13 @@ export default function Home() {
               <span className="text-[10px] font-mono text-neutral-500">06</span>
               대시보드
             </Link>
-            <Link href="/policy" className="hover:text-white transition flex items-center gap-1.5">
+            <a href="#faq" className="hover:text-white transition flex items-center gap-1.5">
               <span className="text-[10px] font-mono text-neutral-500">08</span>
-              정책 & 약관
-            </Link>
+              질문
+            </a>
           </nav>
 
-          {/* Right Action: Language + Login */}
+          {/* Right Action: Language + Login Button (Atlas ->] 로그인 style) */}
           <div className="flex items-center gap-3">
             <span className="text-xs text-neutral-400 hidden sm:inline">文A 한국어</span>
             <Link
@@ -85,210 +97,276 @@ export default function Home() {
               className="flex items-center gap-2 rounded-xl bg-[#5865F2] px-4 py-2 text-xs font-bold text-white hover:bg-[#4752c4] transition shadow-sm"
             >
               <LogIn className="h-3.5 w-3.5" />
-              로그인
+              대시보드 로그인
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero Section (Atlas Exact Typography & Copy) */}
-      <section className="relative pt-20 pb-16 sm:pt-28 sm:pb-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-400 mb-6">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
-            SORA · DISCORD
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white leading-[1.1] mb-6">
-            지키는 든든함에,<br />
-            키우는 재미까지.
-          </h1>
-
-          <p className="max-w-xl text-base sm:text-lg text-neutral-400 font-medium leading-relaxed mb-8">
-            디스코드 서버를 지키고, 키우는 올인원 봇.<br />
-            Sendwich SMS 휴대폰 점유 확인, Resend 이메일 인증, 고도화된 위키 지식 엔진과 포인트 경제까지.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <a
-              href="/api/auth/login"
-              className="flex items-center gap-2 rounded-xl bg-[#5865F2] px-6 py-3 text-sm font-bold text-white hover:bg-[#4752c4] transition shadow-sm"
-            >
-              디스코드로 시작하기
-              <ArrowRight className="h-4 w-4" />
-            </a>
-            <a
-              href="#demo"
-              className="flex items-center gap-2 rounded-xl border border-white/[0.1] bg-[#141620] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1c1f2e] transition"
-            >
-              직접 해 보기
-            </a>
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-neutral-500 pt-2">
-            <div>
-              로그인하면{" "}
-              <Link href="/policy" className="text-neutral-300 underline hover:text-white">
-                이용약관
-              </Link>
-              과{" "}
-              <Link href="/policy" className="text-neutral-300 underline hover:text-white">
-                개인정보처리방침
-              </Link>
-              에 동의한 것으로 봐요.
+      {/* 2. Hero Section (50:50 Atlas Bold Typography + Yeonhong Studio Character Card) */}
+      <section className="relative pt-20 pb-16 sm:pt-28 sm:pb-24 border-b border-white/[0.06]">
+        <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Column (Atlas Headline & CTA) */}
+          <div className="lg:col-span-7">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-400 mb-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+              SORA · DISCORD
             </div>
-            <div className="text-neutral-400 font-medium">
-              설치 없이 · 디스코드 계정 하나로 · 한국 법령 완벽 준수
+
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white leading-[1.1] mb-6">
+              지키는 든든함에,<br />
+              키우는 재미까지.
+            </h1>
+
+            <p className="max-w-xl text-base sm:text-lg text-neutral-400 font-medium leading-relaxed mb-8">
+              디스코드 서버를 지키고, 키우는 올인원 봇.<br />
+              Sendwich SMS 휴대폰 점유 확인, Resend 이메일 인증, 고도화된 위키 지식 엔진과 포인트 경제까지 한 번에.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <a
+                href="/api/auth/login"
+                className="flex items-center gap-2 rounded-xl bg-[#5865F2] px-6 py-3 text-sm font-bold text-white hover:bg-[#4752c4] transition shadow-sm"
+              >
+                디스코드로 시작하기
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="#experience"
+                className="flex items-center gap-2 rounded-xl border border-white/[0.1] bg-[#141620] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1c1f2e] transition"
+              >
+                직접 해 보기
+              </a>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-neutral-500 pt-2 border-t border-white/[0.04]">
+              <div>
+                로그인하면{" "}
+                <Link href="/policy" className="text-neutral-300 underline hover:text-white">
+                  이용약관
+                </Link>
+                과{" "}
+                <Link href="/policy" className="text-neutral-300 underline hover:text-white">
+                  개인정보처리방침
+                </Link>
+                에 동의한 것으로 봐요.
+              </div>
+              <div className="text-neutral-400 font-medium">
+                설치 없이 · 디스코드 계정 하나로 · 한국 법령 완벽 준수
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (Yeonhong-style Featured Visual Studio Card) */}
+          <div className="lg:col-span-5">
+            <div className="rounded-3xl border border-white/[0.08] bg-[#12141e] p-6 shadow-2xl relative overflow-hidden">
+              <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-5">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-2xl bg-[#1c1f2e] border border-white/[0.08] p-1.5 flex items-center justify-center">
+                    <img src="/assets/logo-sora.png" alt="Sora" className="h-full w-full object-contain" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm text-white flex items-center gap-2">
+                      Sora (소라)
+                      <span className="rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] px-1.5 py-0.2 font-semibold">
+                        온라인
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-neutral-400">Koharu Coding Server 플래그십</div>
+                  </div>
+                </div>
+                <div className="text-[11px] font-mono text-neutral-500">Ping: 14ms</div>
+              </div>
+
+              {/* Bot Mascot / Illustration Area (Yeonhong Style) */}
+              <div className="rounded-2xl bg-[#171926] border border-white/[0.06] p-6 flex flex-col items-center text-center mb-5">
+                <div className="h-28 w-28 rounded-3xl overflow-hidden bg-[#202334] p-2 mb-3 shadow-inner">
+                  <img src="/assets/sora-icon.png" alt="Sora Mascot" className="h-full w-full object-contain" />
+                </div>
+                <div className="font-bold text-white text-base">코드로 편리함을, 소라로 든든함을.</div>
+                <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
+                  300만 유저 규모의 안정적인 인프라와 단방향 암호화 인증으로 서버 보안을 지켜요.
+                </p>
+              </div>
+
+              {/* Quick Stat Chips (Yeonhong Style) */}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="p-2.5 rounded-xl bg-[#171926] border border-white/[0.04]">
+                  <div className="text-[10px] text-neutral-500">인증 성공률</div>
+                  <div className="font-bold text-emerald-400 mt-0.5">99.8%</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-[#171926] border border-white/[0.04]">
+                  <div className="text-[10px] text-neutral-500">슬래시 명령어</div>
+                  <div className="font-bold text-white mt-0.5">71개</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-[#171926] border border-white/[0.04]">
+                  <div className="text-[10px] text-neutral-500">UI 규격</div>
+                  <div className="font-bold text-indigo-400 mt-0.5">Discord V2</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Interactive Mockup Dashboard (Atlas Frame Showcase) */}
-      <section id="demo" className="pb-24">
+      {/* 3. Interactive Experience Simulator (Atlas "04 체험 - 디스코드에서는 이렇게 보여요") */}
+      <section id="experience" className="py-20 bg-[#0a0b0e] border-b border-white/[0.06]">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="rounded-2xl border border-white/[0.08] bg-[#0e1017] shadow-2xl overflow-hidden">
-            {/* Mockup Browser Top Bar */}
-            <div className="h-10 border-b border-white/[0.06] bg-[#12141c] px-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-neutral-700"></span>
-                <span className="h-3 w-3 rounded-full bg-neutral-700"></span>
-                <span className="h-3 w-3 rounded-full bg-neutral-700"></span>
-              </div>
-              <div className="rounded-md bg-[#0a0b0e] border border-white/[0.06] px-4 py-1 text-[11px] font-mono text-neutral-400">
-                sora.koharu.live/dashboard/guilds/...
-              </div>
-              <div className="w-12"></div>
+          <div className="text-center mb-10">
+            <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">04 체험</span>
+            <h2 className="text-3xl font-black text-white tracking-tight mt-1">
+              디스코드에서는 이렇게 보여요.
+            </h2>
+            <p className="text-xs text-neutral-400 mt-2">
+              Sora가 직접 명령어를 입력받고 대답하는 Discord Components V2 카드의 모습을 확인해 보세요.
+            </p>
+          </div>
+
+          {/* Simulator Box */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0f1017] shadow-xl overflow-hidden">
+            {/* Simulator Tabs */}
+            <div className="flex border-b border-white/[0.06] bg-[#12141c] overflow-x-auto text-xs font-semibold">
+              <button
+                onClick={() => setActiveSimTab("phone")}
+                className={`flex items-center gap-2 px-5 py-3 border-b-2 transition whitespace-nowrap ${
+                  activeSimTab === "phone"
+                    ? "border-emerald-400 text-white bg-[#171926]"
+                    : "border-transparent text-neutral-400 hover:text-white"
+                }`}
+              >
+                <Smartphone className="h-4 w-4 text-emerald-400" />
+                휴대폰 점유 확인 (Sendwich)
+              </button>
+              <button
+                onClick={() => setActiveSimTab("email")}
+                className={`flex items-center gap-2 px-5 py-3 border-b-2 transition whitespace-nowrap ${
+                  activeSimTab === "email"
+                    ? "border-sky-400 text-white bg-[#171926]"
+                    : "border-transparent text-neutral-400 hover:text-white"
+                }`}
+              >
+                <Mail className="h-4 w-4 text-sky-400" />
+                이메일 6자리 코드 (Resend)
+              </button>
+              <button
+                onClick={() => setActiveSimTab("attendance")}
+                className={`flex items-center gap-2 px-5 py-3 border-b-2 transition whitespace-nowrap ${
+                  activeSimTab === "attendance"
+                    ? "border-amber-400 text-white bg-[#171926]"
+                    : "border-transparent text-neutral-400 hover:text-white"
+                }`}
+              >
+                <DollarSign className="h-4 w-4 text-amber-400" />
+                출석체크 & 포인트 경제
+              </button>
+              <button
+                onClick={() => setActiveSimTab("protect")}
+                className={`flex items-center gap-2 px-5 py-3 border-b-2 transition whitespace-nowrap ${
+                  activeSimTab === "protect"
+                    ? "border-purple-400 text-white bg-[#171926]"
+                    : "border-transparent text-neutral-400 hover:text-white"
+                }`}
+              >
+                <Shield className="h-4 w-4 text-purple-400" />
+                자동 보호 & 안티레이드
+              </button>
             </div>
 
-            {/* Mockup Body: Left sub-nav + Right live area */}
-            <div className="grid grid-cols-1 md:grid-cols-4 min-h-[460px]">
-              {/* Left Sub-Nav */}
-              <div className="border-r border-white/[0.06] bg-[#0c0d13] p-4 flex flex-col justify-between">
-                <div>
-                  {/* Guild Card */}
-                  <div className="flex items-center gap-3 p-2 rounded-xl bg-[#141622] border border-white/[0.06] mb-4">
-                    <div className="h-9 w-9 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white text-xs">
-                      하
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white">하늘 라운지</div>
-                      <div className="text-[10px] text-neutral-400">멤버 12,480명</div>
-                    </div>
-                  </div>
-
-                  {/* Menu Items */}
-                  <div className="space-y-1 text-xs">
-                    <button
-                      onClick={() => setActiveMockTab("attendance")}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition ${
-                        activeMockTab === "attendance"
-                          ? "bg-[#181a28] text-white border border-white/[0.08]"
-                          : "text-neutral-400 hover:text-white"
-                      }`}
-                    >
-                      <span>개요</span>
-                      <span className="rounded bg-indigo-500/20 text-indigo-400 px-1 text-[10px]">01</span>
-                    </button>
-                    <button
-                      onClick={() => setActiveMockTab("verify")}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition ${
-                        activeMockTab === "verify"
-                          ? "bg-[#181a28] text-white border border-white/[0.08]"
-                          : "text-neutral-400 hover:text-white"
-                      }`}
-                    >
-                      <span>인증 시스템</span>
-                      <span className="rounded bg-emerald-500/20 text-emerald-400 px-1 text-[10px]">보안</span>
-                    </button>
-                    <button
-                      onClick={() => setActiveMockTab("protection")}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition ${
-                        activeMockTab === "protection"
-                          ? "bg-[#181a28] text-white border border-white/[0.08]"
-                          : "text-neutral-400 hover:text-white"
-                      }`}
-                    >
-                      <span>자동 보호 (안티레이드)</span>
-                    </button>
-                  </div>
+            {/* Simulated Discord Message Window */}
+            <div className="p-8 bg-[#101119]">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-full bg-[#1e2030] overflow-hidden flex-shrink-0">
+                  <img src="/assets/logo-sora.png" alt="Sora" className="h-full w-full object-contain p-1" />
                 </div>
-
-                <div className="text-[11px] text-neutral-500 font-mono">
-                  Sora Engine v2.0
-                </div>
-              </div>
-
-              {/* Right Live Area */}
-              <div className="md:col-span-3 p-6 bg-[#0e1017] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-base font-bold text-white">하늘 라운지</h3>
-                      <p className="text-xs text-neutral-400">멤버 12,480명 · 오늘 메시지 3,912개</p>
-                    </div>
-                    <span className="rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs px-2.5 py-0.5 font-bold">
-                      02 지키기
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-bold text-sm text-white">Sora</span>
+                    <span className="rounded bg-[#5865F2] text-white text-[10px] font-bold px-1.5 py-0.2">
+                      BOT
                     </span>
+                    <span className="text-[11px] text-neutral-500">오늘 오후 9:28</span>
                   </div>
 
-                  {/* 4 Metric Cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                    <div className="rounded-xl border border-white/[0.06] bg-[#12141d] p-3.5">
-                      <div className="text-[11px] text-neutral-400">멤버</div>
-                      <div className="text-lg font-black text-white mt-1">12,480</div>
-                    </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-[#12141d] p-3.5">
-                      <div className="text-[11px] text-neutral-400">오늘 메시지</div>
-                      <div className="text-lg font-black text-white mt-1">3,912</div>
-                    </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-[#12141d] p-3.5">
-                      <div className="text-[11px] text-neutral-400">막은 위협</div>
-                      <div className="text-lg font-black text-emerald-400 mt-1">27</div>
-                    </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-[#12141d] p-3.5">
-                      <div className="text-[11px] text-neutral-400">서버 점수</div>
-                      <div className="text-lg font-black text-indigo-400 mt-1">96</div>
-                    </div>
-                  </div>
-
-                  {/* Live Simulation of Discord V2 Card */}
-                  <div className="rounded-xl border border-white/[0.08] bg-[#141622] p-5">
-                    <div className="flex items-center justify-between mb-3 border-b border-white/[0.06] pb-2">
-                      <div className="text-xs font-bold text-white flex items-center gap-2">
-                        <Shield className="h-4 w-4 text-emerald-400" />
-                        Discord Components V2 인증 패널 미리보기
+                  {/* Simulated Component V2 Container Card */}
+                  {activeSimTab === "phone" && (
+                    <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-emerald-500 p-5 space-y-3 max-w-xl">
+                      <div className="flex items-center gap-2 text-white font-bold text-sm">
+                        <Smartphone className="h-4 w-4 text-emerald-400" />
+                        📱 휴대전화번호 수집 및 이용 동의서 (Sendwich SMS)
                       </div>
-                      <span className="text-[10px] text-neutral-500">실제 채널에 출력되는 형태</span>
-                    </div>
-
-                    <div className="rounded-lg bg-[#1e202e] border-l-4 border-indigo-500 p-4 text-xs space-y-3">
-                      <div className="font-bold text-white flex items-center gap-2">
-                        <span>🛡️</span>
-                        하늘 라운지 공식 멤버 인증
-                      </div>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed">
-                        원활한 이용과 보안을 위해 인증을 완료해 주세요.
-                        버튼 클릭 시 전화번호 또는 이메일 전용 개인정보 처리방침이 먼저 표시됩니다.
+                      <p className="text-xs text-neutral-300 leading-relaxed">
+                        디스코드 서버 내 1인 1계정 본인 확인 및 중복 가입 방지를 위해 전화번호를 수집합니다.
+                        <br />
+                        <strong>[즉시 파기 원칙]:</strong> 인증 성공 즉시 원본 전화번호는 영구 파기되며 단방향 SHA-256 해시값만 보관됩니다.
                       </p>
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        <button className="rounded-md bg-[#2b2d3d] border border-white/[0.1] px-3 py-1.5 text-[11px] font-semibold text-neutral-200 flex items-center gap-1.5">
-                          📱 휴대폰 인증 (Sendwich)
-                        </button>
-                        <button className="rounded-md bg-[#2b2d3d] border border-white/[0.1] px-3 py-1.5 text-[11px] font-semibold text-neutral-200 flex items-center gap-1.5">
-                          ✉️ 이메일 인증 (Resend)
+                      <div className="p-2.5 rounded-lg bg-[#1b1e2e] text-[11px] text-neutral-400">
+                        ※ 아래 버튼을 누르시면 개인정보 처리방침 및 이용약관에 동의하시는 것으로 간주합니다.
+                      </div>
+                      <div className="pt-1 flex gap-2">
+                        <button className="rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 transition shadow-sm">
+                          동의하고 휴대폰 인증 진행하기
                         </button>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  )}
 
-                <div className="text-xs text-neutral-500 pt-4 flex items-center justify-between border-t border-white/[0.04]">
-                  <span>* 변경 사항은 저장 즉시 디스코드 봇에 실시간 반영됩니다.</span>
-                  <Link href="/dashboard" className="text-indigo-400 hover:underline flex items-center gap-1 font-semibold">
-                    대시보드로 관리하기
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
+                  {activeSimTab === "email" && (
+                    <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-sky-500 p-5 space-y-3 max-w-xl">
+                      <div className="flex items-center gap-2 text-white font-bold text-sm">
+                        <Mail className="h-4 w-4 text-sky-400" />
+                        ✉️ 이메일 주소 수집 및 이용 동의서 (Resend)
+                      </div>
+                      <p className="text-xs text-neutral-300 leading-relaxed">
+                        KCS 공식 발송처(admin@koharu.live)를 통해 6자리 일회용 인증 코드를 발송합니다.
+                        인증 완료 또는 10분 만료 즉시 원본 이메일 주소는 영구 삭제됩니다.
+                      </p>
+                      <div className="p-2.5 rounded-lg bg-[#1b1e2e] text-[11px] text-neutral-400">
+                        ※ 아래 버튼을 누르시면 개인정보 처리방침 및 이용약관에 동의하시는 것으로 간주합니다.
+                      </div>
+                      <div className="pt-1 flex gap-2">
+                        <button className="rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs px-4 py-2 transition shadow-sm">
+                          동의하고 이메일 인증 진행하기
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeSimTab === "attendance" && (
+                    <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-amber-500 p-5 space-y-3 max-w-xl">
+                      <div className="flex items-center gap-2 text-white font-bold text-sm">
+                        <DollarSign className="h-4 w-4 text-amber-400" />
+                        출석체크가 완료되었습니다! (+100 P)
+                      </div>
+                      <p className="text-xs text-neutral-300 leading-relaxed">
+                        연속 출석 7일차 스트릭 보너스: <strong>+50 P 추가 지급</strong>
+                        <br />
+                        현재 보유 잔액: <strong>1,850 P</strong> (서버 랭킹 14위)
+                      </p>
+                      <div className="pt-1 flex gap-2">
+                        <button className="rounded-lg bg-[#272a3d] border border-white/[0.08] text-neutral-200 text-xs px-3.5 py-1.5 font-semibold">
+                          💰 잔액 확인
+                        </button>
+                        <button className="rounded-lg bg-[#272a3d] border border-white/[0.08] text-neutral-200 text-xs px-3.5 py-1.5 font-semibold">
+                          🏪 포인트 상점
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeSimTab === "protect" && (
+                    <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-purple-500 p-5 space-y-3 max-w-xl">
+                      <div className="flex items-center gap-2 text-white font-bold text-sm">
+                        <Shield className="h-4 w-4 text-purple-400" />
+                        🛡️ 비상 안티레이드 락다운(Lockdown) 발동됨
+                      </div>
+                      <p className="text-xs text-neutral-300 leading-relaxed">
+                        10초 내 5명 이상의 대량 유입이 감지되어 모든 초대 링크를 임시 비활성화하고 신규 계정을 격리 조치했습니다.
+                      </p>
+                      <div className="text-[11px] text-emerald-400 font-semibold">
+                        ✓ 서버 보안 등급: 안전 (정상 복구 대기 중)
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -296,23 +374,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3 Pillars Section (Atlas Exact 3 Cards: 웹 대시보드 / 안드로이드 & 모바일 / 슬래시 명령어) */}
-      <section id="features" className="py-20 border-t border-white/[0.06] bg-[#0c0d12]">
+      {/* 4. 3 Pillars Section (Atlas 3 Cards: 웹 대시보드 / 실시간 보안 / 슬래시 명령어) */}
+      <section id="features" className="py-20 bg-[#0c0d12] border-b border-white/[0.06]">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1 */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-6 flex flex-col justify-between">
               <div>
-                <div className="rounded-xl border border-white/[0.06] bg-[#161824] p-4 mb-6">
-                  <div className="flex items-center justify-between text-xs mb-3">
+                <div className="rounded-xl border border-white/[0.06] bg-[#161824] p-4 mb-6 space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
                     <span className="text-neutral-300">자동 보호 (안티레이드)</span>
                     <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
                   </div>
-                  <div className="flex items-center justify-between text-xs mb-3">
+                  <div className="flex items-center justify-between">
                     <span className="text-neutral-300">휴대폰 / 이메일 사전 동의</span>
                     <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between">
                     <span className="text-neutral-300">출석체크 포인트 보상</span>
                     <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
                   </div>
@@ -367,7 +445,7 @@ export default function Home() {
                   <div className="text-indigo-300">/출석</div>
                   <div className="text-neutral-400">/위키 검색 keyword:규칙</div>
                   <div className="text-neutral-400">/티켓생성 카테고리:일반문의</div>
-                  <div className="text-neutral-400">/인증설정</div>
+                  <div className="text-neutral-400">/인증구성</div>
                 </div>
                 <div className="text-xs font-mono text-neutral-500 uppercase tracking-wider mb-1">
                   슬래시 명령어
@@ -387,8 +465,62 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] bg-[#08090c] py-10">
+      {/* 5. FAQ Accordion (Atlas "08 질문" Style) */}
+      <section id="faq" className="py-20 bg-[#0a0b0e]">
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="text-center mb-12">
+            <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">08 질문</span>
+            <h2 className="text-3xl font-black text-white tracking-tight mt-1">자주 묻는 질문</h2>
+            <p className="text-xs text-neutral-400 mt-2">Sora 봇의 보안, 인증 및 대시보드 이용에 대해 안내해 드립니다.</p>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                q: "휴대폰 번호나 이메일은 어떻게 보관되고 파기되나요?",
+                a: "Sendwich SMS 점유 확인과 Resend 이메일 인증 코드는 검증 완료 즉시 원본 평문이 메모리 및 디스크에서 영구 삭제됩니다. 중복 가입 방지용 단방향 SHA-256 해시값만 저장되므로 원본 복원이 절대 불가능합니다.",
+              },
+              {
+                q: "웹 대시보드에서 로그인하면 어떤 권한이 필요한가요?",
+                a: "관리자(Administrator) 또는 서버 관리(Manage Guild) 권한을 보유한 디스코드 서버만 관리 대시보드에 나타납니다. 일반 멤버는 접근할 수 없습니다.",
+              },
+              {
+                q: "대시보드에서 설정을 변경하면 봇에 언제 반영되나요?",
+                a: "상단 '적용하기' 버튼을 누르는 즉시 길드별 JSON 저장소에 동기화되며, 봇 프로세스 재부팅 없이 실시간으로 즉시 적용됩니다.",
+              },
+              {
+                q: "Discord Components V2는 일반 임베드와 무엇이 다른가요?",
+                a: "구형 Embed 레이아웃의 단조로움을 넘어 Discord 공식 최신 규격인 Container(17), Separator(14), Section(9), TextDisplay(10)를 복합 구성하여 디스코드 앱 내에서 모바일/PC 모두 완벽한 정렬을 제공합니다.",
+              },
+            ].map((faq, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-white/[0.06] bg-[#111218] overflow-hidden transition"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full p-4 text-left text-xs font-bold text-white flex items-center justify-between"
+                >
+                  <span>{faq.q}</span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-neutral-400 transition-transform ${
+                      openFaq === i ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {openFaq === i && (
+                  <div className="px-4 pb-4 text-xs text-neutral-400 leading-relaxed border-t border-white/[0.04] pt-3">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Footer */}
+      <footer className="border-t border-white/[0.06] bg-[#07080b] py-10">
         <div className="mx-auto max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img src="/assets/logo-sora.png" alt="Sora" className="h-5 w-5 object-contain" />
