@@ -1,4 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import fs from "node:fs";
+import path from "node:path";
+
+function getSessionsDir(): string {
+  const root = process.cwd();
+  const p = path.resolve(root, "../data/sessions");
+  fs.mkdirSync(p, { recursive: true });
+  return p;
+}
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
@@ -51,36 +60,67 @@ export async function GET(req: NextRequest) {
     });
     const guilds = (await guildsRes.json()) as any[];
 
-    // Filter guilds where user has Administrator (0x8) or ManageGuild (0x20)
-    const adminGuilds = guilds.filter((g: any) => {
-      const perms = BigInt(g.permissions);
-      const isAdmin = (perms & BigInt(0x8)) === BigInt(0x8);
-      const canManage = (perms & BigInt(0x20)) === BigInt(0x20);
-      return isAdmin || canManage || g.owner;
-    });
+    // Filter guilds where user has Administrator (0x8) or ManageGuild (0x20) or Owner
+    const adminGuilds = Array.isArray(guilds)
+      ? guilds.filter((g: any) => {
+          const perms = BigInt(g.permissions || 0);
+          const isAdmin = (perms & BigInt(0x8)) === BigInt(0x8);
+          const canManage = (perms & BigInt(0x20)) === BigInt(0x20);
+          return isAdmin || canManage || g.owner;
+        })
+      : [];
 
-    // 4. Create response and store in cookie
-    const sessionData = {
-      user: {
-        id: user.id,
-        username: user.username,
-        avatar: user.avatar,
-      },
-      guilds: adminGuilds.map((g: any) => ({
-        id: g.id,
-        name: g.name,
-        icon: g.icon,
-        owner: g.owner,
-      })),
-      accessToken,
+    const mappedGuilds = adminGuilds.map((g: any) => ({
+      id: g.id,
+      name: g.name,
+      icon: g.icon,
+      owner: g.owner,
+      permissions: g.permissions,
+    }));
+
+    // 4. Save server-side session file to prevent 4KB cookie overflow
+    try {
+      const sessionsDir = getSessionsDir();
+      fs.writeFileSync(
+        path.join(sessionsDir, `${user.id}.json`),
+        JSON.stringify(
+          {
+            user: {
+              id: user.id,
+              username: user.username,
+              global_name: user.global_name || user.username,
+              avatar: user.avatar,
+            },
+            guilds: mappedGuilds,
+            accessToken,
+            updatedAt: new Date().toISOString(),
+          },
+          null,
+          2
+        ),
+        "utf-8"
+      );
+    } catch (e) {
+      console.error("Failed to save session file:", e);
+    }
+
+    // 5. Set compact lightweight cookie (Only ~180 bytes, fits 100% in 4KB limit)
+    const clientPayload = {
+      id: user.id,
+      username: user.username,
+      global_name: user.global_name || user.username,
+      avatar: user.avatar,
+      token: accessToken,
     };
 
     const res = NextResponse.redirect(new URL("/dashboard", req.url));
-    res.cookies.set("sora_session", JSON.stringify(sessionData), {
-      httpOnly: false, // Accessible to client dashboard for quick hydration
-      secure: process.env.NODE_ENV === "production",
+
+    res.cookies.set("sora_user", JSON.stringify(clientPayload), {
+      httpOnly: false,
+      secure: false, // works seamlessly on both http localhost & https
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: "/",
+      sameSite: "lax",
     });
 
     return res;

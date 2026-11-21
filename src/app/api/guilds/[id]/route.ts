@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
 
+export const dynamic = "force-dynamic";
+
 function getGuildFilePath(guildId: string): string {
   const root = process.cwd();
   const dir1 = path.resolve(root, "../data/guilds");

@@ -2,276 +2,286 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Shield, ArrowLeft, Phone, Mail, FileText, CheckCircle2, Lock, ExternalLink } from "lucide-react";
+import { ArrowLeft, Phone, Mail, Shield, FileText, CheckCircle2 } from "lucide-react";
 
-export default function PolicyPage() {
-  const [activePolicyTab, setActivePolicyTab] = useState<"all" | "phone" | "email" | "terms">("all");
+export default function PolicyHub() {
+  const [activeTab, setActiveTab] = useState<"phone" | "email" | "privacy" | "terms">("phone");
 
   return (
-    <div className="min-h-screen bg-[#090a0f] text-[#dbdee1] selection:bg-indigo-600 selection:text-white">
-      {/* Ambient background glows (jxayx / yeonhong style) */}
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-gradient-to-b from-indigo-600/15 via-purple-600/10 to-transparent blur-[120px] rounded-full"></div>
-        <div className="absolute top-1/3 -right-40 w-[450px] h-[450px] bg-sky-500/10 blur-[140px] rounded-full"></div>
-        <div className="absolute -bottom-40 -left-40 w-[450px] h-[450px] bg-purple-500/10 blur-[140px] rounded-full"></div>
-      </div>
-
-      <header className="border-b border-white/[0.06] bg-[#0b0d13]/70 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 text-sm font-medium text-neutral-400 hover:text-white transition">
+    <div className="min-h-screen bg-[#0a0b0e] text-[#dbdee1] font-sans">
+      {/* Top Header */}
+      <header className="border-b border-white/[0.06] bg-[#0e1017] px-6 py-4">
+        <div className="mx-auto max-w-5xl flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-xs font-semibold text-neutral-400 hover:text-white transition"
+          >
             <ArrowLeft className="h-4 w-4" />
-            홈으로 돌아가기
+            Sora 홈으로 이동
           </Link>
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-bold tracking-tight text-white">Sora 공식 정책 센터</span>
-            <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-xs font-semibold text-indigo-400">
-              KCS Legal
-            </span>
+          <div className="flex items-center gap-2 font-bold text-sm text-white">
+            <img src="/assets/logo-sora.png" alt="Sora" className="h-5 w-5 object-contain" />
+            Sora 공식 법률 준수 & 정책 센터
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-12 space-y-8">
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-400 mb-4">
-            <Shield className="h-3.5 w-3.5" />
-            대한민국 개인정보보호법 및 디스코드 개발자 정책 준수
+      {/* Main Container */}
+      <main className="mx-auto max-w-5xl px-6 py-12">
+        {/* Important Banner */}
+        <div className="mb-8 rounded-2xl border border-indigo-500/20 bg-[#121422] p-5">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <div className="font-bold text-white text-sm">
+                Sora 봇의 모든 기능을 이용하시면 본 정책에 동의하시는 것으로 간주합니다.
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
+                대한민국 「개인정보 보호법」 제15조, 제17조, 제22조 및 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」에
+                의거하여, 휴대폰 인증과 이메일 인증의 수집 목적, 항목, 보유 기간 및 제3자 제공 내역을 독립적으로 고지합니다.
+              </p>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            개인정보 처리방침 및 서비스 이용약관
-          </h1>
-          <p className="text-sm text-neutral-400 mt-2 leading-relaxed">
-            Sora (소라) 디스코드 봇 및 웹 서비스 이용 시 수집되는 개인정보와 이용자 권리에 대해 안내해 드립니다.
-            <br />
-            <strong className="text-white">이 봇의 모든 기능을 이용하시면 아래 개인정보 처리방침 및 이용약관에 동의하시는 것으로 간주합니다.</strong>
-          </p>
         </div>
 
-        {/* Policy Segment Tabs */}
-        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-[#13151f]/80 border border-white/[0.06] backdrop-blur-xl">
+        {/* Tab Selector */}
+        <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-white/[0.06] pb-4">
           <button
-            onClick={() => setActivePolicyTab("all")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition ${
-              activePolicyTab === "all" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white"
-            }`}
-          >
-            <Shield className="h-4 w-4" />
-            통합 개인정보처리방침
-          </button>
-          <button
-            onClick={() => setActivePolicyTab("phone")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition ${
-              activePolicyTab === "phone" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white"
+            onClick={() => setActiveTab("phone")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${
+              activeTab === "phone"
+                ? "bg-white text-neutral-900 shadow-sm"
+                : "bg-[#141620] text-neutral-400 hover:text-white border border-white/[0.04]"
             }`}
           >
             <Phone className="h-4 w-4 text-emerald-400" />
-            휴대폰 번호 인증 전용 정책
+            1. 휴대폰 인증 개인정보 수집·이용 동의서
           </button>
           <button
-            onClick={() => setActivePolicyTab("email")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition ${
-              activePolicyTab === "email" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white"
+            onClick={() => setActiveTab("email")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${
+              activeTab === "email"
+                ? "bg-white text-neutral-900 shadow-sm"
+                : "bg-[#141620] text-neutral-400 hover:text-white border border-white/[0.04]"
             }`}
           >
             <Mail className="h-4 w-4 text-sky-400" />
-            이메일 인증 전용 정책
+            2. 이메일 인증 개인정보 수집·이용 동의서
           </button>
           <button
-            onClick={() => setActivePolicyTab("terms")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition ${
-              activePolicyTab === "terms" ? "bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25" : "text-neutral-400 hover:text-white"
+            onClick={() => setActiveTab("privacy")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${
+              activeTab === "privacy"
+                ? "bg-white text-neutral-900 shadow-sm"
+                : "bg-[#141620] text-neutral-400 hover:text-white border border-white/[0.04]"
             }`}
           >
-            <FileText className="h-4 w-4" />
-            서비스 이용약관
+            <Shield className="h-4 w-4 text-purple-400" />
+            3. 통합 개인정보처리방침 전문
+          </button>
+          <button
+            onClick={() => setActiveTab("terms")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${
+              activeTab === "terms"
+                ? "bg-white text-neutral-900 shadow-sm"
+                : "bg-[#141620] text-neutral-400 hover:text-white border border-white/[0.04]"
+            }`}
+          >
+            <FileText className="h-4 w-4 text-amber-400" />
+            4. 서비스 이용약관 전문
           </button>
         </div>
 
-        {/* Tab 1: ALL / INTEGRATED */}
-        {activePolicyTab === "all" && (
-          <div className="space-y-6">
-            <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-8 space-y-6">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
-                <Shield className="h-5 w-5 text-indigo-400" />
-                1. 총칙 및 수집 기본 원칙
-              </h2>
-              <p className="text-sm text-neutral-300 leading-relaxed">
-                Koharu Coding Server (KCS, 이하 &quot;서버&quot;)는 Sora 봇 및 웹 관리 서비스(sora.koharu.live)를 제공하며,
-                이용자의 개인정보를 소중히 다루고 있습니다. 서비스는 불필요한 개인 식별 정보를 일체 보관하지 않으며,
-                오직 1인 1계정 보안 인증과 서버 운영 지원 목적에 한정하여 최소한의 데이터를 엄격한 보안 하에 처리합니다.
+        {/* Tab 1: Phone Privacy */}
+        {activeTab === "phone" && (
+          <article className="rounded-2xl border border-white/[0.06] bg-[#111218] p-8 text-xs leading-relaxed space-y-6 text-neutral-300">
+            <div className="border-b border-white/[0.06] pb-4">
+              <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">법률 제22조 의거 고지</span>
+              <h1 className="text-xl font-black text-white mt-1">
+                휴대전화번호 수집 및 이용 동의서 (휴대폰 점유 확인용)
+              </h1>
+            </div>
+
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">1. 수집하는 개인정보의 항목</h2>
+              <p>
+                - 필수 수집 항목: 이용자의 휴대전화번호, 발송 일시, 통신사 식별 번호 (Sendwich API 연계)<br />
+                - 자동 수집 항목: 디스코드 고유 사용자 ID (Snowflake), 접속 길드(서버) 식별자
               </p>
-            </div>
+            </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-3">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-base">
-                  <Phone className="h-4 w-4" />
-                  휴대폰 번호 인증 (Sendwich 연동)
-                </div>
-                <p className="text-xs text-neutral-400 leading-relaxed">
-                  SMS 문자 발신을 통한 번호 점유 확인을 수행합니다. <strong>인증 성공 확인 즉시 원본 휴대폰 번호는 영구 파기</strong>되며, 다계정 중복 방지용 단방향 SHA-256 해시값만 저장됩니다.
-                </p>
-                <div className="text-xs text-neutral-500 pt-2 border-t border-white/[0.06]">
-                  제3자 제공: (주)샌드위치 (https://sendwich.kr)
-                </div>
-              </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">2. 개인정보의 수집 및 이용 목적</h2>
+              <p>
+                - 디스코드 커뮤니티 서버 내 1인 1계정 원칙 준수 및 다계정을 악용한 레이드(Raid), 도배, 테러 사전 방지<br />
+                - Sendwich SMS 본인 확인 점유 인증(Discover Mode) 문자 발송 및 결과 검증<br />
+                - 서버 규칙 준수를 위한 기본 자격 확인 및 인증 완료 역할 자동 부여
+              </p>
+            </section>
 
-              <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-6 space-y-3">
-                <div className="flex items-center gap-2 text-sky-400 font-bold text-base">
-                  <Mail className="h-4 w-4" />
-                  이메일 주소 인증 (Resend 연동)
-                </div>
-                <p className="text-xs text-neutral-400 leading-relaxed">
-                  1회용 6자리 인증번호(OTP)를 발송하여 본인 여부를 확인합니다. <strong>인증 완료 즉시 이메일 주소와 코드는 영구 파기</strong>되며, 5분 미입력 시 자동 완전 삭제됩니다.
-                </p>
-                <div className="text-xs text-neutral-500 pt-2 border-t border-white/[0.06]">
-                  발신자: admin@koharu.live (Resend Inc. API 위탁)
-                </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">3. 개인정보의 보유 및 이용 기간 (철저한 즉시 파기 원칙)</h2>
+              <div className="p-4 rounded-xl bg-[#161824] border border-emerald-500/30 text-emerald-300">
+                <strong>[즉시 파기 원칙]:</strong> 수집된 휴대전화번호는 인증 절차 완료(성공 또는 유효시간 경과) 즉시 평문 데이터가 서버 메모리 및 디스크에서 영구 삭제됩니다. 중복 가입 방지를 위한 목적으로만 역산이 불가능한 단방향 암호화 해시(SHA-256 + Server Salt) 형태로만 보관되며, 원본 전화번호로의 복원이 절대 불가능합니다.
               </div>
-            </div>
-          </div>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">4. 개인정보의 제3자 제공 (위탁)</h2>
+              <table className="w-full border-collapse border border-white/[0.08] text-[11px] mt-2">
+                <thead>
+                  <tr className="bg-[#171924] text-neutral-300">
+                    <th className="border border-white/[0.08] p-2 text-left">제공받는 자 (수탁사)</th>
+                    <th className="border border-white/[0.08] p-2 text-left">제공 목적</th>
+                    <th className="border border-white/[0.08] p-2 text-left">제공 항목</th>
+                    <th className="border border-white/[0.08] p-2 text-left">보유 및 이용 기간</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-white/[0.08] p-2">(주)샌드위치 (Sendwich)</td>
+                    <td className="border border-white/[0.08] p-2">SMS 문자 발송 및 점유 확인</td>
+                    <td className="border border-white/[0.08] p-2">휴대전화번호</td>
+                    <td className="border border-white/[0.08] p-2">발송 완료 즉시 파기 (관련 법령 보관 제외)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">5. 동의 거부 권리 및 불이익 안내</h2>
+              <p>
+                이용자는 휴대전화번호 수집 및 이용에 대한 동의를 거부할 권리가 있습니다. 단, 본 동의는 서버의 보안 유지 및 멤버 인증을 위한 필수 항목이므로, 동의를 거부하실 경우 해당 디스코드 서버의 인증 완료 역할 부여 및 일반 채널 이용이 제한될 수 있습니다.
+              </p>
+            </section>
+          </article>
         )}
 
-        {/* Tab 2: PHONE ONLY */}
-        {activePolicyTab === "phone" && (
-          <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-8 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
-                <Phone className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-white">휴대폰 번호 인증 전용 개인정보 수집·이용 규정</h2>
-                <span className="text-xs text-emerald-400">Sendwich API SMS 점유 확인 연동</span>
-              </div>
+        {/* Tab 2: Email Privacy */}
+        {activeTab === "email" && (
+          <article className="rounded-2xl border border-white/[0.06] bg-[#111218] p-8 text-xs leading-relaxed space-y-6 text-neutral-300">
+            <div className="border-b border-white/[0.06] pb-4">
+              <span className="text-[11px] font-bold text-sky-400 uppercase tracking-wider">법률 제22조 의거 고지</span>
+              <h1 className="text-xl font-black text-white mt-1">
+                이메일 주소 수집 및 이용 동의서 (일회용 코드 발송용)
+              </h1>
             </div>
 
-            <div className="space-y-4 text-sm text-neutral-300 leading-relaxed divide-y divide-white/[0.06]">
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">1. 수집하는 개인정보 항목</h3>
-                <p>• 발신 휴대폰 번호 (010-XXXX-XXXX 형식), 이동통신사 (SKT, KT, LGU+ 또는 알뜰폰), 인증 시도 및 발신 일시, Sendwich 고유 인증 식별자(vrf_id)</p>
-              </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">1. 수집하는 개인정보의 항목</h2>
+              <p>
+                - 필수 수집 항목: 이용자의 이메일 주소<br />
+                - 생성 정보: 6자리 일회용 인증 번호(OTP), 인증 요청 일시, 만료 시간(10분)
+              </p>
+            </section>
 
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">2. 수집 및 이용 목적</h3>
-                <p>• 디스코드 서버 내 다계정 생성 방지 및 1인 1계정 점유 확인<br />• 인증 완료에 따른 디스코드 역할(Role) 자동 부여</p>
-              </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">2. 개인정보의 수집 및 이용 목적</h2>
+              <p>
+                - KCS 공식 발송 메일(admin@koharu.live)을 통한 1회용 인증 코드 전달<br />
+                - 허위 계정 및 자동화 매크로 봇 방지 및 실존 계정 점유 확인<br />
+                - 디스코드 서버 내 인증 역할 자동 지급
+              </p>
+            </section>
 
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">3. 보유 및 파기 절차 (즉시 파기 원칙)</h3>
-                <p>
-                  • <strong>인증 판정 성공 즉시 이용자의 원본 휴대폰 번호는 영구적으로 파기</strong>됩니다.<br />
-                  • 동일 번호로 다른 디스코드 계정을 생성하여 가입하는 어뷰징 행위를 원천 방지하기 위해, 복원이 불가능한 <strong>단방향 비가역 암호화 해시(SHA-256)</strong> 값만 최소한의 기간 동안 분리 보관됩니다.
-                </p>
-              </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">3. 개인정보의 보유 및 파기 절차</h2>
+              <p>
+                수집된 이메일 주소는 발송된 6자리 인증 코드가 성공적으로 검증되거나 10분의 유효시간이 종료되는 즉시 원본 데이터가 영구 파기됩니다. KCS는 인증 완료 후 이용자의 원본 이메일 주소를 데이터베이스에 일체 보관하지 않습니다.
+              </p>
+            </section>
 
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">4. 개인정보의 제3자 제공</h3>
-                <p>
-                  • <strong>제공받는 자:</strong> 주식회사 샌드위치 (https://sendwich.kr)<br />
-                  • <strong>제공 목적:</strong> SMS 문자 발신 수신 및 수신 번호와 발신 번호 일치 검증<br />
-                  • <strong>제공 항목:</strong> 발신 전화번호, 인증 문자 본문
-                </p>
-              </div>
-
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">5. 동의 거부권 및 불이익 안내</h3>
-                <p>이용자는 휴대폰 번호 수집 및 제공에 대한 동의를 거부할 권리가 있습니다. 단, 동의를 거부하실 경우 휴대폰 번호 기반의 인증 역할 부여가 제한될 수 있으며, 이 경우 대체 인증 수단(이메일, 캡챠)을 이용하실 수 있습니다.</p>
-              </div>
-            </div>
-          </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">4. 개인정보의 처리 위탁</h2>
+              <p>
+                KCS는 안정적인 이메일 전송을 위해 글로벌 이메일 인프라 기업인 Resend Inc.에 발송 업무를 위탁하고 있으며, 발송 목적 외 다른 용도로 활용되지 않습니다.
+              </p>
+            </section>
+          </article>
         )}
 
-        {/* Tab 3: EMAIL ONLY */}
-        {activePolicyTab === "email" && (
-          <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-8 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400">
-                <Mail className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-white">이메일 주소 인증 전용 개인정보 수집·이용 규정</h2>
-                <span className="text-xs text-sky-400">Resend Inc. API 트랜잭셔널 메일 연동</span>
-              </div>
-            </div>
+        {/* Tab 3: Full Privacy Policy */}
+        {activeTab === "privacy" && (
+          <article className="rounded-2xl border border-white/[0.06] bg-[#111218] p-8 text-xs leading-relaxed space-y-6 text-neutral-300">
+            <h1 className="text-xl font-black text-white">Sora (소라) 통합 개인정보처리방침</h1>
+            <p className="text-neutral-400">
+              최종 개정일: 2026년 11월 21일 | 버전: v2.0
+            </p>
 
-            <div className="space-y-4 text-sm text-neutral-300 leading-relaxed divide-y divide-white/[0.06]">
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">1. 수집하는 개인정보 항목</h3>
-                <p>• 이용자가 입력한 이메일 주소, 시스템이 생성한 1회용 6자리 인증 코드(OTP)</p>
-              </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제1조 (목적 및 적용 범위)</h2>
+              <p>
+                Koharu Coding Server (이하 "운영진")가 개발하고 서비스하는 디스코드 봇 'Sora(소라)' 및 웹 대시보드(sora.koharu.live)는 정보주체의 자유와 권리 보호를 위해 「개인정보 보호법」 및 관계 법령을 준수합니다.
+              </p>
+            </section>
 
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">2. 수집 및 이용 목적</h3>
-                <p>• 본인 소유의 이메일 계정인지 확인하기 위한 1회용 인증 번호 발송 및 확인<br />• 확인 완료 시 인증 역할 자동 부여</p>
-              </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제2조 (처리하는 개인정보의 항목)</h2>
+              <p>
+                1. 기본 운영 정보: Discord User ID, Username, Avatar Hash, 서버(Guild) 식별자, 생성된 티켓 내역, 포인트 잔고 및 출석 기록.<br />
+                2. 본인 인증 정보: 휴대폰 번호(단방향 SHA-256 해시값), 이메일 주소(인증 성공 즉시 파기).
+              </p>
+            </section>
 
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">3. 보유 및 파기 기간</h3>
-                <p>• <strong>인증 성공 시 즉시 파기</strong>됩니다.<br />• 발송된 인증 코드는 5분간만 유효하며, 5분 경과 시 인증 세션 및 이메일 정보는 메모리에서 자동 완전 소멸됩니다.</p>
-              </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제3조 (개인정보의 파기 절차 및 방법)</h2>
+              <p>
+                운영진은 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를 복구할 수 없는 방법으로 영구 파기합니다.
+              </p>
+            </section>
 
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">4. 개인정보 처리 위탁 및 제3자 제공</h3>
-                <p>
-                  • <strong>위탁받는 자:</strong> Resend Inc. (https://resend.com)<br />
-                  • <strong>위탁 업무 내용:</strong> 인증 메일 전송 대행<br />
-                  • <strong>공식 발신처:</strong> <code>admin@koharu.live</code>
-                </p>
-              </div>
-
-              <div className="pt-3">
-                <h3 className="font-semibold text-white mb-1">5. 동의 거부권 및 불이익</h3>
-                <p>이메일 주소 제공을 거부하실 수 있으며, 거부 시 이메일 인증 기능 이용이 제한됩니다.</p>
-              </div>
-            </div>
-          </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제4조 (정보주체와 법정대리인의 권리·의무 및 행사방법)</h2>
+              <p>
+                이용자는 공식 지원 서버(https://kcs.koharu.live/support-server/kcs) 또는 고객지원 티켓을 통해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.
+              </p>
+            </section>
+          </article>
         )}
 
-        {/* Tab 4: TERMS */}
-        {activePolicyTab === "terms" && (
-          <div className="rounded-2xl border border-white/[0.08] bg-[#13151f]/70 backdrop-blur-xl p-8 space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
-              <FileText className="h-5 w-5 text-indigo-400" />
-              Sora 서비스 이용약관
-            </h2>
-            <div className="space-y-4 text-sm text-neutral-300 leading-relaxed">
-              <p>
-                <strong>제1조 (약관의 적용)</strong> 본 약관은 Koharu Coding Server (KCS)의 디스코드 봇 및 웹 서비스 Sora를 이용하는 모든 이용자에게 적용됩니다.
-              </p>
-              <p>
-                <strong>제2조 (이용자의 의무)</strong> 이용자는 타인의 명의나 전화번호, 이메일을 도용하여 인증을 시도하거나 봇 시스템에 비정상적인 부하를 주는 행위를 하여서는 아니 됩니다. 위반 시 즉시 서버 제재(밴) 및 법적 조치가 취해질 수 있습니다.
-              </p>
-              <p>
-                <strong>제3조 (포괄적 동의 조항)</strong> 이용자가 Sora 봇의 슬래시 명령어, 버튼, 모달 및 웹 대시보드 기능을 사용하는 경우, 본 서비스 이용약관 및 개인정보 처리방침에 포괄적으로 동의한 것으로 간주합니다.
-              </p>
-              <p>
-                <strong>제4조 (준거법)</strong> 본 약관은 대한민국 법률에 따라 규율되고 해석됩니다.
-              </p>
-            </div>
-          </div>
-        )}
+        {/* Tab 4: Terms of Service */}
+        {activeTab === "terms" && (
+          <article className="rounded-2xl border border-white/[0.06] bg-[#111218] p-8 text-xs leading-relaxed space-y-6 text-neutral-300">
+            <h1 className="text-xl font-black text-white">Sora (소라) 서비스 이용약관</h1>
+            <p className="text-neutral-400">
+              최종 시행일: 2026년 11월 21일
+            </p>
 
-        {/* Contact Footer Card */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#111214]/80 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div className="font-bold text-white text-base">개인정보 보호책임자 및 문의처</div>
-            <div className="text-xs text-neutral-400 mt-1">
-              Koharu Coding Server (KCS) 보안총괄팀 • <a href="mailto:admin@koharu.live" className="text-indigo-400 underline">admin@koharu.live</a>
-            </div>
-          </div>
-          <a
-            href="mailto:admin@koharu.live"
-            className="flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/10 transition"
-          >
-            문의 메일 보내기
-            <ExternalLink className="h-3.5 w-3.5 text-neutral-400" />
-          </a>
-        </div>
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제1조 (목적)</h2>
+              <p>
+                본 약관은 Koharu Coding Server(이하 "KCS")가 제공하는 디스코드 봇 'Sora' 및 관련 웹 대시보드의 이용 조건 및 절차, 이용자와 서비스 제공자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제2조 (약관의 효력 및 동의 간주)</h2>
+              <p>
+                1. 본 약관은 서비스 내 공지 또는 웹사이트에 게시함으로써 효력이 발생합니다.<br />
+                2. 이용자가 디스코드 내에서 Sora 봇의 명령어를 실행하거나, 인증 버튼을 클릭하거나, 웹 대시보드에 로그인하는 경우 본 약관 및 개인정보 처리방침 전체에 적법하게 동의한 것으로 간주합니다.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제3조 (이용자의 의무 및 금지행위)</h2>
+              <p>
+                이용자는 다음 각 호의 행위를 하여서는 안 되며, 적발 시 사전 통보 없이 서비스 이용 제한 또는 영구 밴 조치가 취해질 수 있습니다:<br />
+                1. 봇 시스템의 버그 악용, 가상 포인트 비정상 증식 및 복사 행위<br />
+                2. 타인의 명의를 도용한 휴대폰/이메일 본인 인증 시도<br />
+                3. 서비스 인프라에 대한 DoS/DDoS 공격 및 비정상 트래픽 유발<br />
+                4. 디스코드 이용약관(Discord Terms of Service) 및 커뮤니티 가이드라인을 위반하는 행위
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-sm font-bold text-white">제4조 (가상 포인트 및 경제 시스템)</h2>
+              <p>
+                봇 내에서 획득되는 모든 포인트, 복권, 상점 아이템은 디스코드 서버 내 오락 및 활동 보조를 위한 가상 데이터이며, 실제 현금 또는 유가증권으로의 환전이 엄격히 금지됩니다.
+              </p>
+            </section>
+          </article>
+        )}
       </main>
-
-      <footer className="border-t border-white/[0.06] py-8 text-center text-xs text-neutral-500">
-        <p>© 2026 Koharu Coding Server (KCS). Sora Discord Bot & Web Dashboard.</p>
-      </footer>
     </div>
   );
 }
