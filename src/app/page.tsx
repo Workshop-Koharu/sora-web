@@ -24,6 +24,8 @@ import {
   Layers,
   ChevronDown,
   Terminal,
+  Coins,
+  Check,
 } from "lucide-react";
 
 export default function Home() {
@@ -292,7 +294,7 @@ export default function Home() {
                     <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-emerald-500 p-5 space-y-3 max-w-xl">
                       <div className="flex items-center gap-2 text-white font-bold text-sm">
                         <Smartphone className="h-4 w-4 text-emerald-400" />
-                        📱 휴대전화번호 수집 및 이용 동의서 (Sendwich SMS)
+                        <span>휴대전화번호 수집 및 이용 동의서 (Sendwich SMS)</span>
                       </div>
                       <p className="text-xs text-neutral-300 leading-relaxed">
                         디스코드 서버 내 1인 1계정 본인 확인 및 중복 가입 방지를 위해 전화번호를 수집합니다.
@@ -314,7 +316,7 @@ export default function Home() {
                     <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-sky-500 p-5 space-y-3 max-w-xl">
                       <div className="flex items-center gap-2 text-white font-bold text-sm">
                         <Mail className="h-4 w-4 text-sky-400" />
-                        ✉️ 이메일 주소 수집 및 이용 동의서 (Resend)
+                        <span>이메일 주소 수집 및 이용 동의서 (Resend)</span>
                       </div>
                       <p className="text-xs text-neutral-300 leading-relaxed">
                         KCS 공식 발송처(admin@koharu.live)를 통해 6자리 일회용 인증 코드를 발송합니다.
@@ -335,7 +337,7 @@ export default function Home() {
                     <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-amber-500 p-5 space-y-3 max-w-xl">
                       <div className="flex items-center gap-2 text-white font-bold text-sm">
                         <DollarSign className="h-4 w-4 text-amber-400" />
-                        출석체크가 완료되었습니다! (+100 P)
+                        <span>출석체크가 완료되었습니다! (+100 P)</span>
                       </div>
                       <p className="text-xs text-neutral-300 leading-relaxed">
                         연속 출석 7일차 스트릭 보너스: <strong>+50 P 추가 지급</strong>
@@ -343,11 +345,13 @@ export default function Home() {
                         현재 보유 잔액: <strong>1,850 P</strong> (서버 랭킹 14위)
                       </p>
                       <div className="pt-1 flex gap-2">
-                        <button className="rounded-lg bg-[#272a3d] border border-white/[0.08] text-neutral-200 text-xs px-3.5 py-1.5 font-semibold">
-                          💰 잔액 확인
+                        <button className="rounded-lg bg-[#272a3d] border border-white/[0.08] text-neutral-200 text-xs px-3.5 py-1.5 font-semibold flex items-center gap-1.5">
+                          <Coins className="h-3.5 w-3.5 text-amber-400" />
+                          <span>잔액 확인</span>
                         </button>
-                        <button className="rounded-lg bg-[#272a3d] border border-white/[0.08] text-neutral-200 text-xs px-3.5 py-1.5 font-semibold">
-                          🏪 포인트 상점
+                        <button className="rounded-lg bg-[#272a3d] border border-white/[0.08] text-neutral-200 text-xs px-3.5 py-1.5 font-semibold flex items-center gap-1.5">
+                          <Coins className="h-3.5 w-3.5 text-indigo-400" />
+                          <span>포인트 상점</span>
                         </button>
                       </div>
                     </div>
@@ -357,13 +361,14 @@ export default function Home() {
                     <div className="rounded-xl border border-white/[0.08] bg-[#151724] border-l-4 border-l-purple-500 p-5 space-y-3 max-w-xl">
                       <div className="flex items-center gap-2 text-white font-bold text-sm">
                         <Shield className="h-4 w-4 text-purple-400" />
-                        🛡️ 비상 안티레이드 락다운(Lockdown) 발동됨
+                        <span>비상 안티레이드 락다운(Lockdown) 발동됨</span>
                       </div>
                       <p className="text-xs text-neutral-300 leading-relaxed">
                         10초 내 5명 이상의 대량 유입이 감지되어 모든 초대 링크를 임시 비활성화하고 신규 계정을 격리 조치했습니다.
                       </p>
-                      <div className="text-[11px] text-emerald-400 font-semibold">
-                        ✓ 서버 보안 등급: 안전 (정상 복구 대기 중)
+                      <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" />
+                        <span>서버 보안 등급: 안전 (정상 복구 대기 중)</span>
                       </div>
                     </div>
                   )}
