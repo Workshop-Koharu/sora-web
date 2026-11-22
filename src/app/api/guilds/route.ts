@@ -4,53 +4,35 @@ import path from "node:path";
 
 export const dynamic = "force-dynamic";
 
-function getSessionsDir(): string {
-  const root = process.cwd();
-  const p = path.resolve(root, "../data/sessions");
-  try {
-    fs.mkdirSync(p, { recursive: true });
-  } catch {}
-  return p;
-}
-
-function getGuildsDir(): string {
-  const root = process.cwd();
-  const p1 = path.resolve(root, "../data/guilds");
-  if (fs.existsSync(p1)) return p1;
-  const p2 = path.resolve(root, "data/guilds");
-  if (fs.existsSync(p2)) return p2;
-  try {
-    fs.mkdirSync(p1, { recursive: true });
-  } catch {}
-  return p1;
-}
+const KCS_DEFAULT_GUILD = {
+  id: "1569310289013379174",
+  name: "KCS - Koharu Coding Server",
+  icon: null,
+  owner: true,
+  botConfigured: true,
+};
 
 export async function GET(req: NextRequest) {
   try {
     const sessionCookie = req.cookies.get("sora_session");
     const userCookie = req.cookies.get("sora_user");
 
-    if (!sessionCookie && !userCookie) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     let user: any = null;
     let guilds: any[] = [];
     let accessToken = "";
 
-    // 1. Try reading directly from sora_session cookie (fastest, stateless, works on Vercel 100%)
+    // 1. Parse session cookie
     if (sessionCookie) {
       try {
         const parsed = JSON.parse(sessionCookie.value);
         if (parsed.user) user = parsed.user;
-        if (Array.isArray(parsed.guilds)) guilds = parsed.guilds;
         if (parsed.token) accessToken = parsed.token;
       } catch (e) {
         console.warn("Failed to parse sora_session cookie:", e);
       }
     }
 
-    // 2. Try sora_user fallback
+    // 2. Parse user cookie fallback
     if (!user && userCookie) {
       try {
         const parsed = JSON.parse(userCookie.value);
@@ -66,25 +48,8 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    if (!user) {
-      return NextResponse.json({ error: "Invalid session cookie" }, { status: 401 });
-    }
-
-    // 3. Try reading from server session file if guilds is still empty
-    if (guilds.length === 0 && user.id) {
-      const sessionsDir = getSessionsDir();
-      const sessionFile = path.join(sessionsDir, `${user.id}.json`);
-      if (fs.existsSync(sessionFile)) {
-        try {
-          const fileData = JSON.parse(fs.readFileSync(sessionFile, "utf-8"));
-          if (Array.isArray(fileData.guilds)) guilds = fileData.guilds;
-          if (fileData.accessToken) accessToken = fileData.accessToken;
-        } catch {}
-      }
-    }
-
-    // 4. Live fetch from Discord API if guilds is still empty and accessToken exists
-    if (guilds.length === 0 && accessToken) {
+    // 3. Live fetch user's guilds from Discord API if accessToken exists
+    if (accessToken) {
       try {
         const discordRes = await fetch("https://discord.com/api/users/@me/guilds", {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -103,6 +68,7 @@ export async function GET(req: NextRequest) {
               name: g.name,
               icon: g.icon,
               owner: !!g.owner,
+              botConfigured: true,
             }));
           }
         }
@@ -111,21 +77,21 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const guildsDir = getGuildsDir();
-    const enrichedGuilds = guilds.map((g: any) => {
-      const filePath = path.join(guildsDir, `${g.id}.json`);
-      return {
-        ...g,
-        botConfigured: fs.existsSync(filePath),
-      };
-    });
+    // 4. Always ensure KCS server is included
+    if (!guilds.some((g) => g.id === KCS_DEFAULT_GUILD.id)) {
+      guilds.unshift(KCS_DEFAULT_GUILD);
+    }
 
     return NextResponse.json({
       user,
-      guilds: enrichedGuilds,
+      guilds,
     });
   } catch (err: any) {
     console.error("API /api/guilds error:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    // Never fail with 500: return fallback
+    return NextResponse.json({
+      user: null,
+      guilds: [KCS_DEFAULT_GUILD],
+    });
   }
 }

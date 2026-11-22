@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "node:fs";
-import path from "node:path";
 
-function getSessionsDir(): string {
-  const root = process.cwd();
-  const p = path.resolve(root, "../data/sessions");
-  try {
-    fs.mkdirSync(p, { recursive: true });
-  } catch {}
-  return p;
-}
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
@@ -19,14 +10,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/?error=missing_code", req.url));
   }
 
-  const clientId = process.env.DISCORD_CLIENT_ID || "1558397761861451805";
-  const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+  const clientId = process.env.DISCORD_CLIENT_ID || "1558397761861451806";
+  const clientSecret = process.env.DISCORD_CLIENT_SECRET || "8lK6v8DuvLK3W1pgpv3MbyJ6gk8s-kmk";
   const redirectUri = process.env.DISCORD_REDIRECT_URI || "https://sora.koharu.live/api/auth/callback";
-
-  if (!clientSecret) {
-    console.error("Missing DISCORD_CLIENT_SECRET environment variable");
-    return NextResponse.redirect(new URL("/?error=credentials_missing", req.url));
-  }
 
   try {
     // 1. Exchange code for access_token
@@ -57,56 +43,7 @@ export async function GET(req: NextRequest) {
     });
     const user = await userRes.json();
 
-    // 3. Fetch User Guilds
-    const guildsRes = await fetch("https://discord.com/api/users/@me/guilds", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const rawGuilds = (await guildsRes.json()) as any[];
-
-    // Filter guilds where user has Administrator (0x8) or ManageGuild (0x20) or Owner
-    const adminGuilds = Array.isArray(rawGuilds)
-      ? rawGuilds.filter((g: any) => {
-          const perms = BigInt(g.permissions || 0);
-          const isAdmin = (perms & BigInt(0x8)) === BigInt(0x8);
-          const canManage = (perms & BigInt(0x20)) === BigInt(0x20);
-          return isAdmin || canManage || g.owner;
-        })
-      : [];
-
-    const mappedGuilds = adminGuilds.map((g: any) => ({
-      id: g.id,
-      name: g.name,
-      icon: g.icon,
-      owner: !!g.owner,
-    }));
-
-    // 4. Save server-side session file as fallback
-    try {
-      const sessionsDir = getSessionsDir();
-      fs.writeFileSync(
-        path.join(sessionsDir, `${user.id}.json`),
-        JSON.stringify(
-          {
-            user: {
-              id: user.id,
-              username: user.username,
-              global_name: user.global_name || user.username,
-              avatar: user.avatar,
-            },
-            guilds: mappedGuilds,
-            accessToken,
-            updatedAt: new Date().toISOString(),
-          },
-          null,
-          2
-        ),
-        "utf-8"
-      );
-    } catch (e) {
-      console.warn("Session file write warning:", e);
-    }
-
-    // 5. Store session in cookie directly for 100% Vercel serverless persistence
+    // 3. Store session in cookie (Lightweight payload to NEVER exceed 4096-byte limit)
     const sessionPayload = {
       user: {
         id: user.id,
@@ -114,7 +51,6 @@ export async function GET(req: NextRequest) {
         global_name: user.global_name || user.username,
         avatar: user.avatar,
       },
-      guilds: mappedGuilds.slice(0, 30),
       token: accessToken,
     };
 
