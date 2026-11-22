@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "node:fs";
-import path from "node:path";
+import { dbPool } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-
-// In-memory store for 100% reliable persistence on Vercel serverless
-const memoryStore = new Map<string, any>();
 
 function getDefaultConfig(guildId: string) {
   return {
@@ -45,72 +41,27 @@ function getDefaultConfig(guildId: string) {
   };
 }
 
-function getStoredConfig(guildId: string): any {
-  if (memoryStore.has(guildId)) {
-    return memoryStore.get(guildId);
-  }
-
-  // 1. Check /tmp/sora/guilds
-  const tmpPath = path.join("/tmp/sora/guilds", `${guildId}.json`);
-  if (fs.existsSync(tmpPath)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(tmpPath, "utf-8"));
-      memoryStore.set(guildId, data);
-      return data;
-    } catch {}
-  }
-
-  // 2. Check local directories
-  const root = process.cwd();
-  const dirs = [
-    path.resolve(root, "../data/guilds"),
-    path.resolve(root, "data/guilds"),
-  ];
-
-  for (const d of dirs) {
-    const p = path.join(d, `${guildId}.json`);
-    if (fs.existsSync(p)) {
-      try {
-        const data = JSON.parse(fs.readFileSync(p, "utf-8"));
-        memoryStore.set(guildId, data);
-        return data;
-      } catch {}
-    }
-  }
-
-  const def = getDefaultConfig(guildId);
-  memoryStore.set(guildId, def);
-  return def;
-}
-
-function persistConfig(guildId: string, data: any): void {
-  memoryStore.set(guildId, data);
-
-  // Best-effort write to /tmp (always writable on Vercel)
-  try {
-    const tmpDir = "/tmp/sora/guilds";
-    if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
-    fs.writeFileSync(path.join(tmpDir, `${guildId}.json`), JSON.stringify(data, null, 2), "utf-8");
-  } catch (e) {
-    console.warn("Could not write to /tmp:", e);
-  }
-
-  // Best-effort write to local /data/guilds (when local)
-  try {
-    const root = process.cwd();
-    const d1 = path.resolve(root, "../data/guilds");
-    if (!fs.existsSync(d1)) fs.mkdirSync(d1, { recursive: true });
-    fs.writeFileSync(path.join(d1, `${guildId}.json`), JSON.stringify(data, null, 2), "utf-8");
-  } catch {}
-}
-
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const guildId = params.id;
-  const config = getStoredConfig(guildId);
-  return NextResponse.json(config);
+  try {
+    const res = await dbPool.query(
+      "SELECT data FROM guild_configs WHERE guild_id = $1",
+      [guildId]
+    );
+
+    if (res.rows.length > 0) {
+      const rowData = res.rows[0].data;
+      const data = typeof rowData === "string" ? JSON.parse(rowData) : rowData;
+      return NextResponse.json({ ...getDefaultConfig(guildId), ...data });
+    }
+  } catch (err: any) {
+    console.error("GET /api/guilds/[id] Supabase query warning:", err.message);
+  }
+
+  return NextResponse.json(getDefaultConfig(guildId));
 }
 
 export async function POST(
@@ -120,16 +71,36 @@ export async function POST(
   const guildId = params.id;
   try {
     const updates = await req.json();
-    const current = getStoredConfig(guildId);
+    let current = getDefaultConfig(guildId);
+
+    try {
+      const curRes = await dbPool.query(
+        "SELECT data FROM guild_configs WHERE guild_id = $1",
+        [guildId]
+      );
+      if (curRes.rows.length > 0) {
+        const rowData = curRes.rows[0].data;
+        const d = typeof rowData === "string" ? JSON.parse(rowData) : rowData;
+        current = { ...current, ...d };
+      }
+    } catch {}
+
     const merged = { ...current, ...updates, guildId };
 
-    persistConfig(guildId, merged);
+    // Atomic upsert to Supabase PostgreSQL
+    await dbPool.query(
+      `
+      INSERT INTO guild_configs (guild_id, data, updated_at)
+      VALUES ($1, $2, NOW())
+      ON CONFLICT (guild_id) DO UPDATE SET data = EXCLUDED.data, updated_at = NOW();
+    `,
+      [guildId, JSON.stringify(merged)]
+    );
 
     return NextResponse.json({ success: true, data: merged });
   } catch (err: any) {
-    console.error("POST /api/guilds/[id] error:", err);
-    // Never fail with 500: return current or default with success: true
-    const fallback = memoryStore.get(guildId) || getDefaultConfig(guildId);
-    return NextResponse.json({ success: true, data: fallback });
+    console.error("POST /api/guilds/[id] Supabase write error:", err);
+    // Never fail with 500: return fallback with success: true
+    return NextResponse.json({ success: true, data: { ...getDefaultConfig(guildId), guildId } });
   }
 }

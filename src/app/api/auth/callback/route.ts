@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { dbPool } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +44,33 @@ export async function GET(req: NextRequest) {
     });
     const user = await userRes.json();
 
-    // 3. Store session in cookie (Lightweight payload to NEVER exceed 4096-byte limit)
+    // 3. Persist session into Supabase PostgreSQL
+    try {
+      await dbPool.query(
+        `
+        INSERT INTO user_sessions (user_id, session_data, updated_at)
+        VALUES ($1, $2, NOW())
+        ON CONFLICT (user_id) DO UPDATE SET session_data = EXCLUDED.session_data, updated_at = NOW();
+      `,
+        [
+          user.id,
+          JSON.stringify({
+            user: {
+              id: user.id,
+              username: user.username,
+              global_name: user.global_name || user.username,
+              avatar: user.avatar,
+            },
+            accessToken,
+            updatedAt: new Date().toISOString(),
+          }),
+        ]
+      );
+    } catch (e: any) {
+      console.warn("Could not save session to Supabase:", e.message);
+    }
+
+    // 4. Store session in cookie (Lightweight payload to NEVER exceed 4096-byte limit)
     const sessionPayload = {
       user: {
         id: user.id,
@@ -65,19 +92,23 @@ export async function GET(req: NextRequest) {
       sameSite: "lax",
     });
 
-    res.cookies.set("sora_user", JSON.stringify({
-      id: user.id,
-      username: user.username,
-      global_name: user.global_name || user.username,
-      avatar: user.avatar,
-      token: accessToken,
-    }), {
-      httpOnly: false,
-      secure: isSecure,
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-      sameSite: "lax",
-    });
+    res.cookies.set(
+      "sora_user",
+      JSON.stringify({
+        id: user.id,
+        username: user.username,
+        global_name: user.global_name || user.username,
+        avatar: user.avatar,
+        token: accessToken,
+      }),
+      {
+        httpOnly: false,
+        secure: isSecure,
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+        sameSite: "lax",
+      }
+    );
 
     return res;
   } catch (err: any) {

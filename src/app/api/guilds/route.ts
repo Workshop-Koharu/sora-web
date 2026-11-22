@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "node:fs";
-import path from "node:path";
+import { dbPool } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +67,6 @@ export async function GET(req: NextRequest) {
               name: g.name,
               icon: g.icon,
               owner: !!g.owner,
-              botConfigured: true,
             }));
           }
         }
@@ -82,9 +80,21 @@ export async function GET(req: NextRequest) {
       guilds.unshift(KCS_DEFAULT_GUILD);
     }
 
+    // 5. Query configured guild IDs from Supabase PostgreSQL
+    let configuredGuildIds = new Set<string>();
+    try {
+      const dbRes = await dbPool.query("SELECT guild_id FROM guild_configs");
+      configuredGuildIds = new Set(dbRes.rows.map((r: any) => r.guild_id));
+    } catch {}
+
+    const enrichedGuilds = guilds.map((g) => ({
+      ...g,
+      botConfigured: configuredGuildIds.has(g.id) || g.id === KCS_DEFAULT_GUILD.id,
+    }));
+
     return NextResponse.json({
       user,
-      guilds,
+      guilds: enrichedGuilds,
     });
   } catch (err: any) {
     console.error("API /api/guilds error:", err);
